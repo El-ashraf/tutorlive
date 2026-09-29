@@ -25,7 +25,7 @@ export default async function HomePage() {
           borderColor: 'rgba(255,255,255,0.08)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold" style={{ color: 'var(--amber)' }}>
               TutorLive
@@ -49,6 +49,10 @@ export default async function HomePage() {
 
           <HomeAuth signedIn={Boolean(userId)} />
         </div>
+        <div className="md:hidden flex items-center gap-5 px-4 pb-3 text-xs font-medium text-white/70">
+          <Link href="/tutors" className="hover:text-[var(--amber)]">Find a tutor</Link>
+          <Link href="/sign-up?role=tutor" className="hover:text-[var(--amber)]">Become a tutor</Link>
+        </div>
       </nav>
 
       {/* ── Hero ── */}
@@ -71,7 +75,7 @@ export default async function HomePage() {
           style={{ background: 'var(--amber)' }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 py-28 text-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-28 text-center">
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-8"
             style={{
@@ -94,7 +98,7 @@ export default async function HomePage() {
           </div>
 
           <h1
-            className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-5 sm:mb-6"
             style={{ color: '#fff' }}
           >
             Learn live, learn{' '}
@@ -102,7 +106,7 @@ export default async function HomePage() {
           </h1>
 
           <p
-            className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed"
             style={{ color: 'rgba(255,255,255,0.65)' }}
           >
             Book a real-time tutoring session with expert tutors. Live video,
@@ -112,14 +116,14 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/tutors"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base transition-transform hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-semibold text-sm sm:text-base transition-transform hover:scale-105"
               style={{ background: 'var(--amber)', color: 'var(--navy)' }}
             >
               Find a tutor <ArrowRight size={18} />
             </Link>
             <Link
               href="/sign-up?role=tutor"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-semibold text-base transition-all"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-semibold text-sm sm:text-base transition-all"
               style={{
                 background: 'rgba(255,255,255,0.1)',
                 color: '#fff',
@@ -131,7 +135,7 @@ export default async function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto mt-16">
+          <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-lg mx-auto mt-12 sm:mt-16">
             {[
               { value: '100%', label: 'Free to start' },
               { value: 'Live', label: 'Video + Whiteboard' },
@@ -139,13 +143,13 @@ export default async function HomePage() {
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div
-                  className="text-2xl font-bold"
+                  className="text-xl sm:text-2xl font-bold"
                   style={{ color: 'var(--amber)' }}
                 >
                   {stat.value}
                 </div>
                 <div
-                  className="text-xs mt-1"
+                  className="text-[10px] sm:text-xs mt-1 leading-tight"
                   style={{ color: 'rgba(255,255,255,0.5)' }}
                 >
                   {stat.label}
@@ -157,16 +161,16 @@ export default async function HomePage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="py-24 px-6">
+      <section className="py-14 sm:py-24 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16">
             <h2
-              className="text-4xl font-bold mb-4"
+              className="text-3xl sm:text-4xl font-bold mb-4"
               style={{ color: 'var(--navy)' }}
             >
               Everything in one live room
             </h2>
-            <p className="text-lg" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-base sm:text-lg" style={{ color: 'var(--text-muted)' }}>
               No switching apps. Everything your session needs, built in.
             </p>
           </div>
@@ -225,16 +229,16 @@ export default async function HomePage() {
 
       {/* ── How it works ── */}
       <section
-        className="py-24 px-6"
+        className="py-14 sm:py-24 px-4 sm:px-6"
         style={{ background: 'var(--cream-dark)' }}
       >
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--navy)' }}>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: 'var(--navy)' }}>
               Get started in minutes
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
             {[
               {
                 step: '01',
@@ -281,13 +285,13 @@ export default async function HomePage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-24 px-6">
+      <section className="py-14 sm:py-24 px-4 sm:px-6">
         <div
-          className="max-w-3xl mx-auto rounded-3xl p-12 text-center"
+          className="max-w-3xl mx-auto rounded-3xl p-6 sm:p-12 text-center"
           style={{ background: 'var(--navy)' }}
         >
           <Star size={32} style={{ color: 'var(--amber)' }} className="mx-auto mb-4" />
-          <h2 className="text-4xl font-bold mb-4" style={{ color: '#fff' }}>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: '#fff' }}>
             Start learning live today
           </h2>
           <p className="mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -305,7 +309,7 @@ export default async function HomePage() {
 
       {/* ── Footer ── */}
       <footer
-        className="border-t py-8 px-6 text-center"
+        className="border-t py-8 px-4 sm:px-6 text-center"
         style={{ borderColor: 'var(--border-warm)', color: 'var(--text-muted)' }}
       >
         <p className="text-sm">

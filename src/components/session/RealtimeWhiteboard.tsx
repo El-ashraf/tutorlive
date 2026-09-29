@@ -322,7 +322,7 @@ export default function RealtimeWhiteboard({
               key={id}
               onClick={() => setTool(id as any)}
               title={label}
-              className={`p-2 rounded-lg text-xs font-medium transition-all ${
+              className={`min-h-10 min-w-10 flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                 tool === id
                   ? 'bg-[#243149] text-[#f29a63] shadow-sm'
                   : 'text-[#243149] hover:bg-white/60'
@@ -338,7 +338,7 @@ export default function RealtimeWhiteboard({
             <button
               key={c}
               onClick={() => setColor(c)}
-              className={`w-6 h-6 rounded-full border transition-transform ${
+              className={`w-8 h-8 sm:w-6 sm:h-6 shrink-0 rounded-full border transition-transform ${
                 color === c ? 'scale-125 ring-2 ring-[#243149]' : 'hover:scale-110'
               }`}
               style={{ background: c, borderColor: '#e5ded3' }}
@@ -363,7 +363,7 @@ export default function RealtimeWhiteboard({
             onClick={handleUndo}
             disabled={strokes.length === 0}
             title="Undo"
-            className="p-2 rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
+            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
           >
             <RotateCcw size={16} />
           </button>
@@ -371,21 +371,21 @@ export default function RealtimeWhiteboard({
             onClick={handleRedo}
             disabled={redoStack.length === 0}
             title="Redo"
-            className="p-2 rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
+            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
           >
             <RotateCw size={16} />
           </button>
           <button
             onClick={handleClear}
             title="Clear Board"
-            className="p-2 rounded-lg text-red-500 hover:bg-red-50"
+            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50"
           >
             <Trash2 size={16} />
           </button>
           <button
             onClick={handleDownload}
             title="Save Image"
-            className="p-2 rounded-lg text-[#243149] hover:bg-[#f3ede2]"
+            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-[#243149] hover:bg-[#f3ede2]"
           >
             <Download size={16} />
           </button>

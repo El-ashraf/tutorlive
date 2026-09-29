@@ -42,14 +42,14 @@ export default async function TutorsPage({
   return (
     <div className="min-h-screen" style={{ background: 'var(--cream)' }}>
       <header
-        className="border-b py-12 px-6 text-center"
+        className="border-b py-10 sm:py-12 px-4 sm:px-6 text-center"
         style={{ background: 'var(--navy)', borderColor: 'rgba(255,255,255,0.08)' }}
       >
         <div className="max-w-4xl mx-auto">
           <Link href="/" className="inline-block text-sm font-semibold mb-4 text-[#f29a63]">
             ← Back to Home
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
             Find Expert Tutors
           </h1>
           <p className="text-base max-w-xl mx-auto text-white/65">
@@ -84,7 +84,7 @@ export default async function TutorsPage({
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {tutors.length === 0 ? (
           <div
             className="text-center py-16 rounded-2xl border bg-white"

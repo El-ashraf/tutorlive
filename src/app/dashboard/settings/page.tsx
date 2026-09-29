@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
           Account Settings
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>

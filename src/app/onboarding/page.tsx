@@ -51,7 +51,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Role Cards */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {[
             {
               value: 'STUDENT' as const,
@@ -69,7 +69,7 @@ export default function OnboardingPage() {
             <button
               key={value}
               onClick={() => setRole(value)}
-              className="p-6 rounded-2xl border-2 text-left transition-all hover:shadow-md"
+              className="p-5 sm:p-6 rounded-2xl border-2 text-left transition-all hover:shadow-md"
               style={{
                 background: role === value ? 'var(--navy)' : '#fff',
                 borderColor: role === value ? 'var(--navy)' : 'var(--border-warm)',

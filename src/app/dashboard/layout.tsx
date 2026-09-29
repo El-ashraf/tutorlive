@@ -19,9 +19,9 @@ export default async function DashboardLayout({
   if (!user) redirect('/onboarding')
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--cream)' }}>
+    <div className="min-h-screen lg:flex" style={{ background: 'var(--cream)' }}>
       <DashboardNav user={user} />
-      <main className="flex-1 ml-64 p-8 max-w-6xl">
+      <main className="mx-auto w-full min-w-0 max-w-6xl px-4 py-5 pb-24 sm:px-6 lg:ml-64 lg:flex-1 lg:px-8 lg:py-8 lg:pb-8">
         {children}
       </main>
     </div>

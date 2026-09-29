@@ -31,7 +31,7 @@ export default async function SessionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
           {isTutor ? 'Teaching Sessions' : 'My Sessions'}
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -40,7 +40,7 @@ export default async function SessionsPage() {
       </div>
 
       <div
-        className="rounded-2xl border p-6"
+        className="rounded-2xl border p-4 sm:p-6"
         style={{ background: '#fff', borderColor: 'var(--border-warm)' }}
       >
         {bookings.length === 0 ? (
@@ -69,15 +69,15 @@ export default async function SessionsPage() {
             {bookings.map((b) => {
               const other = isTutor ? (b as any).student : (b as any).tutor
               return (
-                <div key={b.id} className="py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                <div key={b.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm"
                       style={{ background: 'var(--navy)', color: 'var(--amber)' }}
                     >
                       {other.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-bold text-base" style={{ color: 'var(--navy)' }}>
                         {b.title || `${b.subject} Session`}
                       </div>
@@ -92,7 +92,7 @@ export default async function SessionsPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between sm:justify-end gap-3 pl-11 sm:pl-0">
                     <span
                       className="text-xs font-semibold px-3 py-1 rounded-full"
                       style={{

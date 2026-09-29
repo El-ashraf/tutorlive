@@ -30,7 +30,7 @@ export default async function TutorProfilePage({
   return (
     <div className="min-h-screen" style={{ background: 'var(--cream)' }}>
       <nav
-        className="border-b py-4 px-6 bg-[#243149] border-white/10"
+        className="border-b py-4 px-4 sm:px-6 bg-[#243149] border-white/10"
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link
@@ -43,9 +43,9 @@ export default async function TutorProfilePage({
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 py-10 space-y-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
         <div
-          className="rounded-3xl border p-8 shadow-sm flex flex-col md:flex-row items-start justify-between gap-6 bg-white border-[#e5ded3]"
+          className="rounded-3xl border p-5 sm:p-8 shadow-sm flex flex-col md:flex-row items-start justify-between gap-6 bg-white border-[#e5ded3]"
         >
           <div className="flex flex-col sm:flex-row items-start gap-6">
             <div
@@ -60,7 +60,7 @@ export default async function TutorProfilePage({
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold text-[#243149]">
+                <h1 className="text-2xl sm:text-3xl font-bold break-words text-[#243149]">
                   {tutor.name}
                 </h1>
                 <span className="flex items-center gap-1 bg-emerald-500/10 text-emerald-600 text-xs font-semibold px-2.5 py-1 rounded-full">
@@ -97,7 +97,7 @@ export default async function TutorProfilePage({
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-5 sm:gap-8">
           <div className="md:col-span-2 space-y-8">
             <div
               className="rounded-2xl border p-6 bg-white border-[#e5ded3]"

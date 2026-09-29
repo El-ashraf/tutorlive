@@ -40,7 +40,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* Welcome */}
       <div>
-        <h1 className="text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
           Good day, {user.name.split(' ')[0]} 👋
         </h1>
         <p className="mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
       <InstantRoomLauncher userName={user.name} />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: 'Upcoming sessions',
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
         ].map(({ label, value, icon: Icon, color }) => (
           <div
             key={label}
-            className="rounded-2xl p-5 border"
+            className="rounded-2xl p-4 sm:p-5 border min-w-0"
             style={{ background: '#fff', borderColor: 'var(--border-warm)' }}
           >
             <div className="flex items-start justify-between mb-3">
@@ -154,15 +154,15 @@ export default async function DashboardPage() {
                 ? (booking as any).student
                 : (booking as any).tutor
               return (
-                <div key={booking.id} className="py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div key={booking.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold"
                       style={{ background: 'var(--cream-dark)', color: 'var(--navy)' }}
                     >
                       {other.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-medium text-sm" style={{ color: 'var(--navy)' }}>
                         {booking.subject} with {other.name}
                       </div>
@@ -171,7 +171,7 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 pl-12 sm:pl-0">
                     <span
                       className="text-xs font-semibold px-2.5 py-1 rounded-full"
                       style={{

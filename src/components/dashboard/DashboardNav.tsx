@@ -38,13 +38,27 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
   const links = user.role === 'TUTOR' ? tutorLinks : studentLinks
 
   return (
-    <aside
-      className="fixed left-0 top-0 h-screen w-64 flex flex-col border-r z-40"
-      style={{
-        background: 'var(--navy)',
-        borderColor: 'rgba(255,255,255,0.06)',
-      }}
-    >
+    <>
+      <header
+        className="sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 lg:hidden"
+        style={{ background: 'var(--navy)', borderColor: 'rgba(255,255,255,0.06)' }}
+      >
+        <div className="min-w-0">
+          <Link href="/" className="font-bold text-lg" style={{ color: 'var(--amber)' }}>
+            TutorLive
+          </Link>
+          <p className="truncate text-xs text-white/60">{user.name}</p>
+        </div>
+        <UserButton />
+      </header>
+
+      <aside
+        className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r lg:flex"
+        style={{
+          background: 'var(--navy)',
+          borderColor: 'rgba(255,255,255,0.06)',
+        }}
+      >
       {/* Logo */}
       <div className="px-6 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <Link href="/" className="text-xl font-bold" style={{ color: 'var(--amber)' }}>
@@ -97,6 +111,33 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
           </div>
         </div>
       </div>
-    </aside>
+      </aside>
+
+      <nav
+        aria-label="Dashboard navigation"
+        className="fixed inset-x-0 bottom-0 z-50 flex overflow-x-auto border-t px-1 pt-2 lg:hidden"
+        style={{
+          background: 'var(--navy)',
+          borderColor: 'rgba(255,255,255,0.08)',
+          paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
+        }}
+      >
+        {links.map(({ href, icon: Icon, label }) => {
+          const isActive = pathname === href
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive ? 'page' : undefined}
+              className="flex min-w-[62px] flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-medium"
+              style={{ color: isActive ? 'var(--amber)' : 'rgba(255,255,255,0.62)' }}
+            >
+              <Icon size={18} />
+              <span className="max-w-full truncate">{label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+    </>
   )
 }

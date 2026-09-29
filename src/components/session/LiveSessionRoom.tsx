@@ -137,23 +137,23 @@ export default function LiveSessionRoom({
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#1e273a] text-white">
+    <div className="h-[100dvh] w-full flex flex-col overflow-hidden bg-[#1e273a] text-white">
       {/* ── Top Header Bar ── */}
-      <header className="h-16 px-6 border-b border-[#344158] flex items-center justify-between bg-[#243149] shrink-0">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="font-bold text-lg text-[#f29a63]">
+      <header className="min-h-14 sm:h-16 px-3 sm:px-6 py-2 sm:py-0 border-b border-[#344158] flex items-center justify-between gap-2 bg-[#243149] shrink-0">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+          <Link href="/dashboard" className="shrink-0 font-bold text-base sm:text-lg text-[#f29a63]">
             TutorLive
           </Link>
-          <div className="h-4 w-px bg-[#344158]" />
-          <div>
-            <h1 className="font-semibold text-sm text-white">
+          <div className="hidden sm:block h-4 w-px bg-[#344158]" />
+          <div className="min-w-0">
+            <h1 className="max-w-[34vw] sm:max-w-none truncate font-semibold text-xs sm:text-sm text-white">
               {booking?.subject || 'Live Tutoring Class'}
             </h1>
-            <p className="text-xs text-[#aeb9c7]">
+            <p className="hidden sm:block text-xs text-[#aeb9c7]">
               Room Code: <span className="font-mono text-[#f29a63] font-bold">{roomId}</span>
             </p>
           </div>
-          <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">
+          <div className="hidden sm:flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             LIVE
           </div>
@@ -182,45 +182,66 @@ export default function LiveSessionRoom({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
           <button
             onClick={copyRoomLink}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1e273a] text-xs font-semibold text-[#aeb9c7] hover:text-white border border-[#344158] transition-all"
+            aria-label="Share room link"
+            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-[#1e273a] text-xs font-semibold text-[#aeb9c7] hover:text-white border border-[#344158] transition-all"
           >
             {copied ? <Check size={14} className="text-emerald-400" /> : <Share2 size={14} />}
-            {copied ? 'Link Copied' : 'Share Link'}
+            <span className="hidden sm:inline">{copied ? 'Link Copied' : 'Share Link'}</span>
           </button>
 
           {isTutor ? (
             <button
               onClick={handleEndSession}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-sm transition-all"
+              aria-label="End session"
+              className="flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-sm transition-all"
             >
-              <PhoneOff size={14} /> End Session
+              <PhoneOff size={14} /> <span className="hidden sm:inline">End Session</span>
             </button>
           ) : (
             <button
               onClick={handleLeaveRoom}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-500/15 text-red-400 text-xs font-semibold hover:bg-red-500/25 border border-red-500/20 transition-all"
+              aria-label="Leave class"
+              className="flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl bg-red-500/15 text-red-400 text-xs font-semibold hover:bg-red-500/25 border border-red-500/20 transition-all"
             >
-              <LogOut size={14} /> Leave Class
+              <LogOut size={14} /> <span className="hidden sm:inline">Leave Class</span>
             </button>
           )}
         </div>
       </header>
 
+      <div className="md:hidden flex shrink-0 items-center gap-1 border-b border-[#344158] bg-[#243149] p-1.5">
+        {[
+          { id: 'split', label: 'Split', icon: LayoutTemplate },
+          { id: 'whiteboard', label: 'Board', icon: PenTool },
+          { id: 'video', label: 'Video', icon: Video },
+        ].map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => setViewMode(id as any)}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold ${
+              viewMode === id ? 'bg-[#f29a63] text-[#243149]' : 'text-[#aeb9c7]'
+            }`}
+          >
+            <Icon size={15} /> {label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Scrollable / Expandable Interactive Layout ── */}
-      <div className="flex-1 flex overflow-hidden p-4 gap-4 bg-[#1e273a]">
+      <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden p-2 sm:p-4 gap-3 sm:gap-4 bg-[#1e273a]">
         {/* Main Classroom Workspace Container */}
-        <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-y-auto pr-1">
+        <div className="min-w-0 flex-1 flex flex-col md:flex-row gap-3 sm:gap-4 pr-1">
           {/* Whiteboard Container (Always mounted in DOM) */}
           <div
-            className={`h-full min-h-[500px] transition-all duration-200 ${
+            className={`h-[52vh] min-h-[320px] shrink-0 transition-all duration-200 lg:h-full lg:min-h-0 ${
               viewMode === 'video'
                 ? 'hidden'
                 : viewMode === 'whiteboard'
                 ? 'w-full flex-1'
-                : 'flex-1 w-full md:w-3/5'
+                : 'w-full flex-1 md:w-3/5'
             }`}
           >
             <RealtimeWhiteboard
@@ -232,12 +253,12 @@ export default function LiveSessionRoom({
 
           {/* WebRTC Video Call Container (ALWAYS MOUNTED TO PREVENT DISCONNECT) */}
           <div
-            className={`h-full min-h-[350px] transition-all duration-200 ${
+            className={`h-[42vh] min-h-[280px] shrink-0 transition-all duration-200 lg:h-full lg:min-h-0 ${
               viewMode === 'whiteboard'
                 ? 'hidden'
                 : viewMode === 'video'
                 ? 'w-full flex-1'
-                : 'w-full md:w-2/5'
+                : 'w-full flex-1 md:w-2/5'
             }`}
           >
             <WebRtcVideoCall
@@ -249,7 +270,7 @@ export default function LiveSessionRoom({
         </div>
 
         {/* ── Right Side Panel (Chat, Copilot, Notes) ── */}
-        <div className="w-80 h-full flex flex-col bg-[#243149] rounded-2xl border border-[#344158] overflow-hidden shrink-0">
+        <div className="w-full h-[42vh] min-h-[280px] flex flex-col bg-[#243149] rounded-2xl border border-[#344158] overflow-hidden shrink-0 lg:w-80 lg:h-full lg:min-h-0">
           <div className="flex items-center border-b border-[#344158] bg-[#1e273a]">
             {[
               { id: 'chat', label: 'Chat', icon: MessageSquare },
