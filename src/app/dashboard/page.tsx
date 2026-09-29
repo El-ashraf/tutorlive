@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { formatDateTime } from '@/lib/utils'
-import { Calendar, BookOpen, Clock, Users, ArrowRight } from 'lucide-react'
+import { Calendar, BookOpen, Clock, Users, ArrowRight } from '@/components/ui/icons'
 import Link from 'next/link'
 
 import InstantRoomLauncher from '@/components/dashboard/InstantRoomLauncher'

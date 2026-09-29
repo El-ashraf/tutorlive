@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { formatDateTime } from '@/lib/utils'
 import Link from 'next/link'
-import { Calendar, Video, Clock, ArrowRight } from 'lucide-react'
+import { Calendar, Video, Clock, ArrowRight } from '@/components/ui/icons'
 
 export default async function SessionsPage() {
   const { userId } = await auth()

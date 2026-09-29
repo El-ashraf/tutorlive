@@ -39,6 +39,9 @@ model User {
   bookingsAsTutor   Booking[]     @relation("TutorBookings")
   reviewsGiven      Review[]      @relation("ReviewsGiven")
   reviewsReceived   Review[]      @relation("ReviewsReceived")
+  organizationsFounded Organization[] @relation("OrganizationFounder")
+  organizationMemberships OrganizationMember[]
+  tutorialGroups TutorialGroup[] @relation("TutorialGroupTutor")
 
   @@index([clerkId])
   @@index([role])
@@ -94,4 +97,46 @@ model Review {
   createdAt  DateTime @default(now())
 
   @@index([receiverId])
+}
+
+model Organization {
+  id             String              @id @default(cuid())
+  name           String
+  code           String              @unique
+  founderId      String
+  founder        User                @relation("OrganizationFounder", fields: [founderId], references: [id], onDelete: Cascade)
+  members        OrganizationMember[]
+  tutorialGroups TutorialGroup[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([founderId])
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String       @default("TUTOR")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+model TutorialGroup {
+  id             String        @id @default(cuid())
+  organizationId String
+  name           String
+  description    String?
+  tutorId        String?
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  tutor          User?         @relation("TutorialGroupTutor", fields: [tutorId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([tutorId])
 }

@@ -1,10 +1,6 @@
 import Link from 'next/link'
 import { auth } from '@clerk/nextjs/server'
-import {
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from '@clerk/nextjs'
+import HomeAuth from '@/components/home-auth'
 import {
   BookOpen,
   Video,
@@ -14,7 +10,7 @@ import {
   ArrowRight,
   Users,
   Clock,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 export default async function HomePage() {
   const { userId } = await auth()
@@ -51,42 +47,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
-            {!userId ? (
-              <>
-              <SignInButton mode="modal">
-                <button
-                  className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                  style={{ color: 'rgba(255,255,255,0.8)' }}
-                >
-                  Sign in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button
-                  className="text-sm font-semibold px-4 py-2 rounded-lg transition-all"
-                  style={{
-                    background: 'var(--amber)',
-                    color: 'var(--navy)',
-                  }}
-                >
-                  Get started
-                </button>
-              </SignUpButton>
-              </>
-            ) : (
-              <>
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium px-4 py-2 rounded-lg"
-                style={{ color: 'var(--amber)' }}
-              >
-                Dashboard
-              </Link>
-              <UserButton />
-              </>
-            )}
-          </div>
+          <HomeAuth signedIn={Boolean(userId)} />
         </div>
       </nav>
 

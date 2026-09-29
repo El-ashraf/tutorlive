@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import BookingModal from '@/components/tutors/BookingModal'
-import { Star, CheckCircle2, ArrowLeft, BookOpen } from 'lucide-react'
+import { Star, CheckCircle2, ArrowLeft, BookOpen } from '@/components/ui/icons'
 
 export default async function TutorProfilePage({
   params,

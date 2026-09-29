@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { Star, Search, ArrowRight } from 'lucide-react'
+import { Star, Search, ArrowRight } from '@/components/ui/icons'
 
 export const revalidate = 60
 

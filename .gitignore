@@ -1,1 +1,7 @@
 node_modules
+.next/
+out/
+build/
+*.tsbuildinfo
+.env*
+!.env.example
