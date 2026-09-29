@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/USER/.gemini/antigravity/scratch/tutorlive/src/middleware.ts"],"sourcesContent":["import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'\n\nconst isPublicRoute = createRouteMatcher([\n  '/',\n  '/sign-in(.*)',\n  '/sign-up(.*)',\n  '/tutors(.*)',\n  '/api/webhooks(.*)',\n])\n\nexport default clerkMiddleware(async (auth, req) => {\n  if (!isPublicRoute(req)) {\n    await auth.protect()\n  }\n})\n\nexport const config = {\n  matcher: [\n    '/((?!_next|[^?]*\\\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',\n    '/(api|trpc)(.*)',\n  ],\n}\n"],"names":["isPublicRoute","auth","req","protect","config","matcher"],"mappings":";;;;;;AAAA;AAAA;;AAEA,MAAMA,gBAAgB,IAAA,wMAAkB,EAAC;IACvC;IACA;IACA;IACA;IACA;CACD;uCAEc,IAAA,wMAAe,EAAC,OAAOC,MAAMC;IAC1C,IAAI,CAACF,cAAcE,MAAM;QACvB,MAAMD,KAAKE,OAAO;IACpB;AACF;AAEO,MAAMC,SAAS;IACpBC,SAAS;QACP;QACA;KACD;AACH"}}]
-}
