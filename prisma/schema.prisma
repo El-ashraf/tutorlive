@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  STUDENT
+  TUTOR
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id         String   @id @default(cuid())
+  clerkId    String   @unique
+  email      String   @unique
+  name       String
+  avatarUrl  String?
+  role       Role     @default(STUDENT)
+  bio        String?
+  subjects   String[]
+  hourlyRate Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tutorProfile      TutorProfile?
+  bookingsAsStudent Booking[]     @relation("StudentBookings")
+  bookingsAsTutor   Booking[]     @relation("TutorBookings")
+  reviewsGiven      Review[]      @relation("ReviewsGiven")
+  reviewsReceived   Review[]      @relation("ReviewsReceived")
+
+  @@index([clerkId])
+  @@index([role])
+}
+
+model TutorProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline      String?
+  availability  Json?
+  totalSessions Int      @default(0)
+  avgRating     Float    @default(0)
+  reviewCount   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  roomId      String        @unique @default(cuid())
+  studentId   String
+  tutorId     String
+  student     User          @relation("StudentBookings", fields: [studentId], references: [id])
+  tutor       User          @relation("TutorBookings", fields: [tutorId], references: [id])
+  subject     String
+  title       String
+  notes       String?
+  scheduledAt DateTime
+  durationMin Int           @default(60)
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  review Review?
+
+  @@index([studentId])
+  @@index([tutorId])
+  @@index([roomId])
+  @@index([scheduledAt])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  bookingId  String   @unique
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  giverId    String
+  giver      User     @relation("ReviewsGiven", fields: [giverId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReviewsReceived", fields: [receiverId], references: [id])
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  @@index([receiverId])
+}
