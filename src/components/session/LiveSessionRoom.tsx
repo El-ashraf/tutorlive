@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import LiveKitVideoCall from './LiveKitVideoCall'
@@ -37,6 +37,11 @@ interface ChatMessage {
   timestamp: string
 }
 
+interface CopilotMessage {
+  role: 'user' | 'assistant'
+  text: string
+}
+
 export default function LiveSessionRoom({
   roomId,
   booking,
@@ -48,6 +53,13 @@ export default function LiveSessionRoom({
   const [copied, setCopied] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputMessage, setInputMessage] = useState('')
+  const [chatStatus, setChatStatus] = useState('CONNECTING')
+  const [chatError, setChatError] = useState('')
+  const chatChannelRef = useRef<any>(null)
+  const [copilotMessages, setCopilotMessages] = useState<CopilotMessage[]>([])
+  const [copilotInput, setCopilotInput] = useState('')
+  const [copilotLoading, setCopilotLoading] = useState(false)
+  const [copilotError, setCopilotError] = useState('')
   const [notes, setNotes] = useState('')
 
   const isTutor = currentUser.role === 'TUTOR' || booking?.tutorId === currentUser.id
@@ -55,32 +67,43 @@ export default function LiveSessionRoom({
   // Supabase Realtime Setup for Chat & Meeting Control
   useEffect(() => {
     const channel = supabase.channel(`room_ctrl:${roomId}`, {
-      config: { broadcast: { self: true } },
+      config: { broadcast: { self: false, ack: true } },
     })
 
     channel
       .on('broadcast', { event: 'NEW_CHAT_MESSAGE' }, ({ payload }) => {
-        if (payload) {
-          setMessages((prev) => [...prev, payload])
+        if (payload?.id && payload?.text && payload?.senderName) {
+          setMessages((prev) => prev.some((message) => message.id === payload.id)
+            ? prev
+            : [...prev, payload])
         }
       })
       .on('broadcast', { event: 'END_SESSION' }, () => {
         alert('The session has been ended by the tutor.')
         router.push('/dashboard')
       })
-      .subscribe()
+      .subscribe((status) => setChatStatus(status))
+
+    chatChannelRef.current = channel
 
     return () => {
+      chatChannelRef.current = null
       supabase.removeChannel(channel)
     }
   }, [roomId, router])
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!inputMessage.trim()) return
 
+    const channel = chatChannelRef.current
+    if (!channel || chatStatus !== 'SUBSCRIBED') {
+      setChatError('Chat is reconnecting. Please try sending again in a moment.')
+      return
+    }
+
     const msg: ChatMessage = {
-      id: Math.random().toString(36).substring(2, 9),
+      id: crypto.randomUUID(),
       senderName: currentUser.name,
       text: inputMessage.trim(),
       timestamp: new Date().toLocaleTimeString('en-GB', {
@@ -89,14 +112,47 @@ export default function LiveSessionRoom({
       }),
     }
 
-    const channel = supabase.channel(`room_ctrl:${roomId}`)
-    channel.send({
-      type: 'broadcast',
-      event: 'NEW_CHAT_MESSAGE',
-      payload: msg,
-    })
-
+    setChatError('')
+    try {
+      const status = await channel.send({
+        type: 'broadcast',
+        event: 'NEW_CHAT_MESSAGE',
+        payload: msg,
+      })
+      if (status !== 'ok') throw new Error('Realtime send failed')
+    } catch {
+      setChatError('Message could not be sent. Check your connection and try again.')
+      return
+    }
+    setMessages((prev) => [...prev, msg])
     setInputMessage('')
+  }
+
+  const handleAskCopilot = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const question = copilotInput.trim()
+    if (!question || copilotLoading) return
+
+    const history = copilotMessages
+    setCopilotMessages((prev) => [...prev, { role: 'user', text: question }])
+    setCopilotInput('')
+    setCopilotError('')
+    setCopilotLoading(true)
+
+    try {
+      const response = await fetch('/api/ai/copilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId, message: question, history }),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'The AI Copilot could not answer.')
+      setCopilotMessages((prev) => [...prev, { role: 'assistant', text: result.answer }])
+    } catch (cause) {
+      setCopilotError(cause instanceof Error ? cause.message : 'The AI Copilot could not answer.')
+    } finally {
+      setCopilotLoading(false)
+    }
   }
 
   // End Session for Everyone (Tutor action)
@@ -112,8 +168,8 @@ export default function LiveSessionRoom({
         })
       }
 
-      const channel = supabase.channel(`room_ctrl:${roomId}`)
-      await channel.send({
+      const channel = chatChannelRef.current
+      if (channel && chatStatus === 'SUBSCRIBED') await channel.send({
         type: 'broadcast',
         event: 'END_SESSION',
         payload: { endedBy: currentUser.name },
@@ -248,6 +304,7 @@ export default function LiveSessionRoom({
               roomId={roomId}
               userId={currentUser.id}
               userName={currentUser.name}
+              isTutor={isTutor}
             />
           </div>
 
@@ -336,28 +393,78 @@ export default function LiveSessionRoom({
                   />
                   <button
                     type="submit"
+                    disabled={chatStatus !== 'SUBSCRIBED'}
+                    aria-label="Send chat message"
                     className="p-2 rounded-xl bg-[#f29a63] text-[#243149] font-bold hover:opacity-90"
                   >
                     <Send size={14} />
                   </button>
                 </form>
+                <p aria-live="polite" className="mt-1 min-h-4 text-[10px] text-red-300">
+                  {chatError || (chatStatus === 'SUBSCRIBED'
+                    ? ''
+                    : ['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(chatStatus)
+                      ? `Chat disconnected (${chatStatus}). Check your connection and Supabase Realtime settings.`
+                      : 'Connecting to classroom chat…')}
+                </p>
               </div>
             )}
 
             {activeTab === 'copilot' && (
-              <div className="flex-1 flex flex-col text-xs text-[#aeb9c7] space-y-3">
+              <div className="flex min-h-0 flex-1 flex-col text-xs text-[#aeb9c7]">
                 <div className="p-3 bg-[#1e273a] rounded-xl border border-[#344158]">
                   <p className="font-semibold text-white mb-1 flex items-center gap-1.5 text-xs">
                     <Sparkles size={14} className="text-[#f29a63]" /> AI Tutor Assistant
                   </p>
                   <p className="text-[11px] text-[#aeb9c7]">
-                    Need a quick explanation, formula, or concept summary during your session? Ask your AI copilot!
+                    Ask for a clear explanation, worked example, or summary related to {booking?.subject || 'your lesson'}.
+                  </p>
+                  <p className="mt-1 text-[10px] text-[#aeb9c7]">
+                    Powered by Gemini. Avoid entering private or sensitive information.
                   </p>
                 </div>
-                <div className="flex-1 border border-[#344158] rounded-xl bg-[#1e273a] p-3 text-center flex flex-col items-center justify-center">
-                  <Sparkles size={24} className="text-[#f29a63] mb-2" />
-                  <p className="font-medium text-white text-xs">AI Copilot Ready</p>
-                  <p className="text-[10px] text-[#aeb9c7] mt-1">Ask questions anytime during your live tutoring lesson.</p>
+                <div className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-xl border border-[#344158] bg-[#1e273a] p-3">
+                  {copilotMessages.length === 0 ? (
+                    <div className="flex flex-1 flex-col items-center justify-center text-center">
+                      <Sparkles size={24} className="mb-2 text-[#f29a63]" />
+                      <p className="text-xs font-medium text-white">Ask your AI Copilot</p>
+                      <p className="mt-1 text-[10px]">The Copilot can explain topics and work through examples.</p>
+                    </div>
+                  ) : copilotMessages.map((message, index) => (
+                    <div
+                      key={`${message.role}-${index}`}
+                      className={`max-w-[90%] whitespace-pre-wrap rounded-xl px-3 py-2 text-xs leading-relaxed ${
+                        message.role === 'user'
+                          ? 'self-end bg-[#f29a63] font-medium text-[#243149]'
+                          : 'self-start bg-[#344158] text-white'
+                      }`}
+                    >
+                      {message.text}
+                    </div>
+                  ))}
+                  {copilotLoading && <p className="text-[10px] text-[#aeb9c7]">Thinking…</p>}
+                  {copilotError && <p role="alert" className="text-[10px] text-red-300">{copilotError}</p>}
+                </div>
+                <form onSubmit={handleAskCopilot} className="mt-3 flex gap-2">
+                  <input
+                    type="text"
+                    value={copilotInput}
+                    onChange={(event) => setCopilotInput(event.target.value)}
+                    maxLength={2000}
+                    disabled={copilotLoading}
+                    placeholder="Ask a question…"
+                    aria-label="Ask the AI Copilot"
+                    className="min-w-0 flex-1 rounded-xl border border-[#344158] bg-[#1e273a] px-3 py-2 text-xs text-white focus:border-[#f29a63] focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    disabled={copilotLoading || !copilotInput.trim()}
+                    aria-label="Send question to AI Copilot"
+                    className="rounded-xl bg-[#f29a63] p-2 font-bold text-[#243149] hover:opacity-90 disabled:opacity-50"
+                  >
+                    <Send size={14} />
+                  </button>
+                </form>
                 </div>
               </div>
             )}

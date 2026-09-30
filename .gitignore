@@ -5,3 +5,5 @@ build/
 *.tsbuildinfo
 .env*
 !.env.example
+/AGENTS.md
+/CLAUDE.md

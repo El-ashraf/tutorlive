@@ -12,6 +12,9 @@ import {
   Square,
   Circle as CircleIcon,
   Minus,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
   Download,
 } from 'lucide-react'
 
@@ -39,12 +42,14 @@ interface RealtimeWhiteboardProps {
   roomId: string
   userId: string
   userName: string
+  isTutor: boolean
 }
 
 export default function RealtimeWhiteboard({
   roomId,
   userId,
   userName,
+  isTutor,
 }: RealtimeWhiteboardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
@@ -52,11 +57,26 @@ export default function RealtimeWhiteboard({
   const [color, setColor] = useState('#243149')
   const [size, setSize] = useState(4)
 
-  const [strokes, setStrokes] = useState<Stroke[]>([])
+  const [pages, setPages] = useState<Record<number, Stroke[]>>({ 0: [] })
+  const [currentPage, setCurrentPage] = useState(0)
   const [redoStack, setRedoStack] = useState<Stroke[]>([])
   const currentStrokeRef = useRef<Stroke | null>(null)
   const [remoteCursors, setRemoteCursors] = useState<Record<string, RemoteCursor>>({})
+  const [realtimeStatus, setRealtimeStatus] = useState('CONNECTING')
   const channelRef = useRef<any>(null)
+  const pagesRef = useRef<Record<number, Stroke[]>>({ 0: [] })
+  const currentPageRef = useRef(0)
+  const strokes = pages[currentPage] ?? []
+  const pageCount = Math.max(1, ...Object.keys(pages).map((page) => Number(page) + 1))
+
+  const updatePageStrokes = useCallback((page: number, update: (current: Stroke[]) => Stroke[]) => {
+    const nextPages = {
+      ...pagesRef.current,
+      [page]: update(pagesRef.current[page] ?? []),
+    }
+    pagesRef.current = nextPages
+    setPages(nextPages)
+  }, [])
 
   const colors = [
     '#243149',
@@ -94,12 +114,23 @@ export default function RealtimeWhiteboard({
     }
 
     strokes.forEach((stroke) => {
-      drawStrokeOnContext(ctx, stroke)
+      drawStrokeOnContext(ctx, stroke, canvas.width, canvas.height)
     })
   }, [strokes])
 
-  const drawStrokeOnContext = (ctx: CanvasRenderingContext2D, stroke: Stroke) => {
+  const drawStrokeOnContext = (
+    ctx: CanvasRenderingContext2D,
+    stroke: Stroke,
+    canvasWidth: number,
+    canvasHeight: number,
+  ) => {
     if (stroke.points.length === 0) return
+
+    const points = stroke.points.map((point) => ({
+      x: point.x * canvasWidth,
+      y: point.y * canvasHeight,
+    }))
+    const strokeSize = stroke.size * canvasWidth / 1000
 
     ctx.save()
     ctx.lineCap = 'round'
@@ -107,33 +138,33 @@ export default function RealtimeWhiteboard({
 
     if (stroke.tool === 'eraser') {
       ctx.strokeStyle = '#fbf8f1'
-      ctx.lineWidth = stroke.size * 3
+      ctx.lineWidth = strokeSize * 3
     } else if (stroke.tool === 'highlighter') {
       ctx.strokeStyle = stroke.color
-      ctx.lineWidth = stroke.size * 3
+      ctx.lineWidth = strokeSize * 3
       ctx.globalAlpha = 0.35
     } else {
       ctx.strokeStyle = stroke.color
-      ctx.lineWidth = stroke.size
+      ctx.lineWidth = strokeSize
       ctx.globalAlpha = 1.0
     }
 
     ctx.beginPath()
-    const first = stroke.points[0]
+    const first = points[0]
 
-    if (stroke.tool === 'line' && stroke.points.length >= 2) {
-      const last = stroke.points[stroke.points.length - 1]
+    if (stroke.tool === 'line' && points.length >= 2) {
+      const last = points[points.length - 1]
       ctx.moveTo(first.x, first.y)
       ctx.lineTo(last.x, last.y)
-    } else if (stroke.tool === 'rect' && stroke.points.length >= 2) {
-      const last = stroke.points[stroke.points.length - 1]
+    } else if (stroke.tool === 'rect' && points.length >= 2) {
+      const last = points[points.length - 1]
       const width = last.x - first.x
       const height = last.y - first.y
       ctx.strokeRect(first.x, first.y, width, height)
       ctx.restore()
       return
-    } else if (stroke.tool === 'circle' && stroke.points.length >= 2) {
-      const last = stroke.points[stroke.points.length - 1]
+    } else if (stroke.tool === 'circle' && points.length >= 2) {
+      const last = points[points.length - 1]
       const radius = Math.hypot(last.x - first.x, last.y - first.y)
       ctx.arc(first.x, first.y, radius, 0, 2 * Math.PI)
       ctx.stroke()
@@ -141,8 +172,8 @@ export default function RealtimeWhiteboard({
       return
     } else {
       ctx.moveTo(first.x, first.y)
-      for (let i = 1; i < stroke.points.length; i++) {
-        const pt = stroke.points[i]
+      for (let i = 1; i < points.length; i++) {
+        const pt = points[i]
         ctx.lineTo(pt.x, pt.y)
       }
     }
@@ -167,19 +198,78 @@ export default function RealtimeWhiteboard({
   useEffect(() => {
     const channel = supabase.channel(`whiteboard:${roomId}`, {
       config: {
-        broadcast: { self: false },
+        broadcast: { self: false, ack: true },
       },
     })
 
     channel
       .on('broadcast', { event: 'DRAW_STROKE' }, ({ payload }) => {
-        if (payload?.stroke) {
-          setStrokes((prev) => [...prev, payload.stroke])
+        if (payload?.stroke?.id) {
+          const page = Number.isInteger(payload.page) ? payload.page : 0
+          const current = pagesRef.current[page] ?? []
+          if (current.some((stroke) => stroke.id === payload.stroke.id)) return
+          const nextPages = { ...pagesRef.current, [page]: [...current, payload.stroke] }
+          pagesRef.current = nextPages
+          setPages(nextPages)
         }
       })
-      .on('broadcast', { event: 'CLEAR_CANVAS' }, () => {
-        setStrokes([])
+      .on('broadcast', { event: 'REMOVE_STROKE' }, ({ payload }) => {
+        if (payload?.strokeId) {
+          const page = Number.isInteger(payload.page) ? payload.page : 0
+          updatePageStrokes(page, (current) => current.filter((stroke) => stroke.id !== payload.strokeId))
+        }
+      })
+      .on('broadcast', { event: 'CLEAR_CANVAS' }, ({ payload }) => {
+        const page = Number.isInteger(payload?.page) ? payload.page : 0
+        updatePageStrokes(page, () => [])
         setRedoStack([])
+      })
+      .on('broadcast', { event: 'PAGE_ADDED' }, ({ payload }) => {
+        const page = payload?.page
+        if (!Number.isInteger(page) || page < 1 || page > 99) return
+        const nextPages = { ...pagesRef.current }
+        for (let index = 0; index <= page; index++) nextPages[index] ??= []
+        pagesRef.current = nextPages
+        setPages(nextPages)
+        currentPageRef.current = page
+        setCurrentPage(page)
+        setRedoStack([])
+      })
+      .on('broadcast', { event: 'PAGE_CHANGED' }, ({ payload }) => {
+        const page = payload?.page
+        if (isTutor || !Number.isInteger(page) || page < 0 || page > 99) return
+        const nextPages = { ...pagesRef.current }
+        for (let index = 0; index <= page; index++) nextPages[index] ??= []
+        pagesRef.current = nextPages
+        setPages(nextPages)
+        currentPageRef.current = page
+        setCurrentPage(page)
+        setRedoStack([])
+      })
+      .on('broadcast', { event: 'REQUEST_CANVAS_SYNC' }, ({ payload }) => {
+        if (isTutor && payload?.userId && payload.userId !== userId) {
+          void channel.send({
+            type: 'broadcast',
+            event: 'SYNC_CANVAS_STATE',
+            payload: {
+              targetUserId: payload.userId,
+              pages: pagesRef.current,
+              currentPage: currentPageRef.current,
+            },
+          })
+        }
+      })
+      .on('broadcast', { event: 'SYNC_CANVAS_STATE' }, ({ payload }) => {
+        if (payload?.pages && (payload.targetUserId === userId || payload.targetUserId === '*')) {
+          const nextPages = { ...(payload.pages as Record<number, Stroke[]>) }
+          const page = Number.isInteger(payload.currentPage) ? payload.currentPage : 0
+          nextPages[0] ??= []
+          pagesRef.current = nextPages
+          setPages(nextPages)
+          currentPageRef.current = page
+          setCurrentPage(page)
+          setRedoStack([])
+        }
       })
       .on('broadcast', { event: 'CURSOR_MOVE' }, ({ payload }) => {
         if (payload?.userId) {
@@ -189,14 +279,35 @@ export default function RealtimeWhiteboard({
           }))
         }
       })
-      .subscribe()
+      .subscribe((status) => {
+        setRealtimeStatus(status)
+        if (status !== 'SUBSCRIBED') return
+
+        if (isTutor) {
+          void channel.send({
+            type: 'broadcast',
+            event: 'SYNC_CANVAS_STATE',
+            payload: {
+              targetUserId: '*',
+              pages: pagesRef.current,
+              currentPage: currentPageRef.current,
+            },
+          })
+        } else {
+          void channel.send({
+            type: 'broadcast',
+            event: 'REQUEST_CANVAS_SYNC',
+            payload: { userId },
+          })
+        }
+      })
 
     channelRef.current = channel
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [roomId])
+  }, [isTutor, roomId, updatePageStrokes, userId])
 
   useEffect(() => {
     redraw()
@@ -209,8 +320,8 @@ export default function RealtimeWhiteboard({
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
     return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
+      x: Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
+      y: Math.max(0, Math.min(1, (clientY - rect.top) / rect.height)),
     }
   }
 
@@ -220,7 +331,7 @@ export default function RealtimeWhiteboard({
     setIsDrawing(true)
 
     const newStroke: Stroke = {
-      id: Math.random().toString(36).substring(2, 9),
+      id: crypto.randomUUID(),
       tool,
       color,
       size,
@@ -228,7 +339,7 @@ export default function RealtimeWhiteboard({
     }
 
     currentStrokeRef.current = newStroke
-    setStrokes((prev) => [...prev, newStroke])
+    updatePageStrokes(currentPage, (current) => [...current, newStroke])
     setRedoStack([])
   }
 
@@ -236,8 +347,8 @@ export default function RealtimeWhiteboard({
     const pt = getCoordinates(e)
     if (!pt) return
 
-    if (channelRef.current) {
-      channelRef.current.send({
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
         type: 'broadcast',
         event: 'CURSOR_MOVE',
         payload: { userId, userName, x: pt.x, y: pt.y },
@@ -252,8 +363,8 @@ export default function RealtimeWhiteboard({
     }
     currentStrokeRef.current = updatedStroke
 
-    setStrokes((prev) =>
-      prev.map((s) => (s.id === updatedStroke.id ? updatedStroke : s))
+    updatePageStrokes(currentPage, (current) =>
+      current.map((stroke) => (stroke.id === updatedStroke.id ? updatedStroke : stroke)),
     )
   }
 
@@ -261,11 +372,11 @@ export default function RealtimeWhiteboard({
     if (!isDrawing || !currentStrokeRef.current) return
     setIsDrawing(false)
 
-    if (channelRef.current && currentStrokeRef.current) {
-      channelRef.current.send({
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED' && currentStrokeRef.current) {
+      void channelRef.current.send({
         type: 'broadcast',
         event: 'DRAW_STROKE',
-        payload: { stroke: currentStrokeRef.current },
+        payload: { page: currentPageRef.current, stroke: currentStrokeRef.current },
       })
     }
 
@@ -275,24 +386,39 @@ export default function RealtimeWhiteboard({
   const handleUndo = () => {
     if (strokes.length === 0) return
     const last = strokes[strokes.length - 1]
-    setStrokes((prev) => prev.slice(0, -1))
+    updatePageStrokes(currentPage, (current) => current.slice(0, -1))
     setRedoStack((prev) => [...prev, last])
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
+        type: 'broadcast',
+        event: 'REMOVE_STROKE',
+        payload: { page: currentPage, strokeId: last.id },
+      })
+    }
   }
 
   const handleRedo = () => {
     if (redoStack.length === 0) return
     const last = redoStack[redoStack.length - 1]
     setRedoStack((prev) => prev.slice(0, -1))
-    setStrokes((prev) => [...prev, last])
+    updatePageStrokes(currentPage, (current) => [...current, last])
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
+        type: 'broadcast',
+        event: 'DRAW_STROKE',
+        payload: { page: currentPage, stroke: last },
+      })
+    }
   }
 
   const handleClear = () => {
-    setStrokes([])
+    updatePageStrokes(currentPage, () => [])
     setRedoStack([])
-    if (channelRef.current) {
-      channelRef.current.send({
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
         type: 'broadcast',
         event: 'CLEAR_CANVAS',
+        payload: { page: currentPage },
       })
     }
   }
@@ -301,9 +427,45 @@ export default function RealtimeWhiteboard({
     const canvas = canvasRef.current
     if (!canvas) return
     const link = document.createElement('a')
-    link.download = `whiteboard-${roomId}.png`
+    link.download = `whiteboard-${roomId}-page-${currentPage + 1}.png`
     link.href = canvas.toDataURL('image/png')
     link.click()
+  }
+
+  const handleSetPage = (page: number) => {
+    if (!isTutor || page < 0 || page >= pageCount || page === currentPage) return
+    setIsDrawing(false)
+    currentStrokeRef.current = null
+    currentPageRef.current = page
+    setCurrentPage(page)
+    setRedoStack([])
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
+        type: 'broadcast',
+        event: 'PAGE_CHANGED',
+        payload: { page },
+      })
+    }
+  }
+
+  const handleAddPage = () => {
+    if (!isTutor || pageCount >= 100) return
+    const page = pageCount
+    const nextPages = { ...pagesRef.current, [page]: [] }
+    pagesRef.current = nextPages
+    setPages(nextPages)
+    setIsDrawing(false)
+    currentStrokeRef.current = null
+    currentPageRef.current = page
+    setCurrentPage(page)
+    setRedoStack([])
+    if (channelRef.current && realtimeStatus === 'SUBSCRIBED') {
+      void channelRef.current.send({
+        type: 'broadcast',
+        event: 'PAGE_ADDED',
+        payload: { page },
+      })
+    }
   }
 
   return (
@@ -358,6 +520,42 @@ export default function RealtimeWhiteboard({
           />
         </div>
 
+        <div className="flex items-center gap-1 border-l border-[#e5ded3] pl-2">
+          <button
+            type="button"
+            onClick={() => handleSetPage(currentPage - 1)}
+            disabled={!isTutor || currentPage === 0}
+            aria-label="Previous whiteboard page"
+            className="min-h-9 min-w-9 flex items-center justify-center rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <span className="whitespace-nowrap text-[10px] font-semibold text-[#5e5b55]">
+            Page {currentPage + 1} of {pageCount}
+          </span>
+          <button
+            type="button"
+            onClick={() => handleSetPage(currentPage + 1)}
+            disabled={!isTutor || currentPage >= pageCount - 1}
+            aria-label="Next whiteboard page"
+            className="min-h-9 min-w-9 flex items-center justify-center rounded-lg text-[#243149] hover:bg-[#f3ede2] disabled:opacity-30"
+          >
+            <ChevronRight size={16} />
+          </button>
+          {isTutor ? (
+            <button
+              type="button"
+              onClick={handleAddPage}
+              disabled={pageCount >= 100}
+              className="flex min-h-9 items-center gap-1 rounded-lg bg-[#243149] px-2 text-[10px] font-semibold text-white disabled:opacity-40"
+            >
+              <Plus size={14} /> New page
+            </button>
+          ) : (
+            <span className="whitespace-nowrap text-[9px] text-[#8a8680]">Following teacher</span>
+          )}
+        </div>
+
         <div className="flex items-center gap-1.5 border-l border-[#e5ded3] pl-3">
           <button
             onClick={handleUndo}
@@ -405,11 +603,19 @@ export default function RealtimeWhiteboard({
           className="w-full h-full touch-none"
         />
 
+        {realtimeStatus !== 'SUBSCRIBED' && (
+          <div className="absolute bottom-2 left-2 rounded bg-white/90 px-2 py-1 text-[10px] text-[#6b6257]">
+            {['CHANNEL_ERROR', 'TIMED_OUT', 'CLOSED'].includes(realtimeStatus)
+              ? `Whiteboard disconnected (${realtimeStatus}). Check Supabase Realtime.`
+              : 'Connecting whiteboard…'}
+          </div>
+        )}
+
         {Object.values(remoteCursors).map((cursor) => (
           <div
             key={cursor.userId}
             className="absolute pointer-events-none transition-all duration-75 flex items-center gap-1 z-20"
-            style={{ left: cursor.x, top: cursor.y }}
+            style={{ left: `${cursor.x * 100}%`, top: `${cursor.y * 100}%` }}
           >
             <div className="w-3 h-3 bg-[#f29a63] rounded-full border-2 border-white shadow-md" />
             <span className="bg-[#243149] text-white text-[10px] px-1.5 py-0.5 rounded shadow-sm font-semibold">
