@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import WebRtcVideoCall from './WebRtcVideoCall'
+import LiveKitVideoCall from './LiveKitVideoCall'
 import RealtimeWhiteboard from './RealtimeWhiteboard'
 import {
   Video,
@@ -251,7 +251,7 @@ export default function LiveSessionRoom({
             />
           </div>
 
-          {/* WebRTC Video Call Container (ALWAYS MOUNTED TO PREVENT DISCONNECT) */}
+          {/* Keep the classroom connection mounted when switching views. */}
           <div
             className={`h-[42vh] min-h-[280px] shrink-0 transition-all duration-200 lg:h-full lg:min-h-0 ${
               viewMode === 'whiteboard'
@@ -261,10 +261,10 @@ export default function LiveSessionRoom({
                 : 'w-full flex-1 md:w-2/5'
             }`}
           >
-            <WebRtcVideoCall
+            <LiveKitVideoCall
               roomId={roomId}
-              userId={currentUser.id}
               userName={currentUser.name}
+              isTutor={isTutor}
             />
           </div>
         </div>
