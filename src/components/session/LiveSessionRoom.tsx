@@ -450,7 +450,7 @@ export default function LiveSessionRoom({
                     type="text"
                     value={copilotInput}
                     onChange={(event) => setCopilotInput(event.target.value)}
-                    maxLength={2000}
+                    maxLength={5000}
                     disabled={copilotLoading}
                     placeholder="Ask a question…"
                     aria-label="Ask the AI Copilot"
@@ -465,7 +465,6 @@ export default function LiveSessionRoom({
                     <Send size={14} />
                   </button>
                 </form>
-                </div>
               </div>
             )}
 
