@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server'
+import { randomUUID } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { AccessToken } from 'livekit-server-sdk'
 import { prisma } from '@/lib/prisma'
@@ -40,7 +41,9 @@ export async function GET(request: Request) {
     const roomRole = booking?.tutorId === user.id ? 'TUTOR' : booking?.studentId === user.id ? 'STUDENT' : user.role
 
     const token = new AccessToken(apiKey, apiSecret, {
-      identity: user.id,
+      // LiveKit requires identities to be unique within a room. Give each
+      // browser join its own identity so a second tab/device doesn't evict it.
+      identity: `${user.id}:${randomUUID()}`,
       name: user.name,
       metadata: JSON.stringify({ role: roomRole }),
       ttl: '12h',
