@@ -1,4 +1,5 @@
 import { SignIn } from '@clerk/nextjs'
+import { isClerkConfigured } from '@/lib/clerk-config'
 
 export default function SignInPage() {
   return (
@@ -15,7 +16,16 @@ export default function SignInPage() {
             Sign in to your TutorLive account
           </p>
         </div>
-        <SignIn />
+        {isClerkConfigured ? (
+          <SignIn />
+        ) : (
+          <div
+            className="rounded-2xl border p-6 text-center text-sm"
+            style={{ borderColor: 'var(--border-warm)', color: 'var(--text-muted)' }}
+          >
+            Authentication is not configured yet. Add your Clerk keys to enable sign-in.
+          </div>
+        )}
       </div>
     </div>
   )

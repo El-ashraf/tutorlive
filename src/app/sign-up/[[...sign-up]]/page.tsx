@@ -1,4 +1,5 @@
 import { SignUp } from '@clerk/nextjs'
+import { isClerkConfigured } from '@/lib/clerk-config'
 
 export default function SignUpPage() {
   return (
@@ -15,7 +16,16 @@ export default function SignUpPage() {
             Create your free account — no credit card needed
           </p>
         </div>
-        <SignUp />
+        {isClerkConfigured ? (
+          <SignUp />
+        ) : (
+          <div
+            className="rounded-2xl border p-6 text-center text-sm"
+            style={{ borderColor: 'var(--border-warm)', color: 'var(--text-muted)' }}
+          >
+            Authentication is not configured yet. Add your Clerk keys to enable sign-up.
+          </div>
+        )}
       </div>
     </div>
   )

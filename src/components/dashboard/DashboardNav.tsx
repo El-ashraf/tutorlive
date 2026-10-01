@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
+import { isClerkConfigured } from '@/lib/clerk-config'
 import {
   LayoutDashboard,
   Calendar,
@@ -49,7 +50,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
           </Link>
           <p className="truncate text-xs text-white/60">{user.name}</p>
         </div>
-        <UserButton />
+        {isClerkConfigured && <UserButton />}
       </header>
 
       <aside
@@ -101,7 +102,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
         className="px-4 py-4 border-t flex items-center gap-3"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}
       >
-        <UserButton />
+        {isClerkConfigured && <UserButton />}
         <div className="min-w-0">
           <div className="text-sm font-medium truncate" style={{ color: '#fff' }}>
             {user.name}

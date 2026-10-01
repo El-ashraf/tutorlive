@@ -15,7 +15,9 @@ services:
     restart: on-failure
 
   web:
-    image: node:22-slim
+    build:
+      context: .
+      dockerfile: .base44/Dockerfile.dev
     working_dir: /app
     volumes:
       - ./:/app
@@ -32,7 +34,7 @@ services:
       - ./.env.base44-defaults
       - /run/base44/app.env
     command:
-      ["sh", "-ec", "npm install && npx prisma db push && exec npx next dev -H 0.0.0.0 -p 3000"]
+      ["sh", "-ec", "npm ci && npx prisma db push && exec node node_modules/next/dist/bin/next dev -H 0.0.0.0 -p 3000"]
     depends_on:
       db:
         condition: service_healthy

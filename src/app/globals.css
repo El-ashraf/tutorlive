@@ -1,18 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #243149;
-  --navy-light: #344158;
-  --amber: #f29a63;
-  --amber-light: #f7b98a;
-  --cream: #fbf8f1;
-  --cream-dark: #f3ede2;
-  --border-warm: #e5ded3;
-  --text-muted: #8a8680;
+  --navy: #0A0E14;
+  --navy-light: #111827;
+  --navy-card: #1a2030;
+  --cobalt: #2563EB;
+  --cobalt-bright: #3B82F6;
+  --cobalt-glow: rgba(37, 99, 235, 0.35);
+  --rose: #F43F5E;
+  --rose-bright: #FF5A5F;
+  --ice: #F8FAFC;
+  --border-cool: #e2e8f0;
+  --text-muted: #94a3b8;
 }
 
 body {
-  background-color: var(--cream);
+  background-color: var(--ice);
   color: var(--navy);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,18 +30,55 @@ body {
   }
 }
 
+/* ── Glossy utilities ── */
+.gloss-btn {
+  position: relative;
+  overflow: hidden;
+}
+.gloss-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 45%);
+  pointer-events: none;
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.card-glow {
+  box-shadow: 0 0 24px var(--cobalt-glow), 0 0 1px rgba(37,99,235,0.2);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(59,130,246,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.hero-glow {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 30%, rgba(37,99,235,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 75%, rgba(244,63,94,0.12) 0%, transparent 50%);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--cream-dark); }
-::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar-track { background: var(--navy-light); }
+::-webkit-scrollbar-thumb { background: var(--cobalt); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cobalt-bright); }
 
 /* Selection */
-::selection { background: var(--amber); color: var(--navy); }
+::selection { background: var(--cobalt); color: #fff; }
 
 /* Focus rings */
 *:focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--cobalt);
   outline-offset: 2px;
   border-radius: 4px;
 }
