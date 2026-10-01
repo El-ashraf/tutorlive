@@ -42,10 +42,10 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
     <>
       <header
         className="sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 lg:hidden"
-        style={{ background: 'var(--navy)', borderColor: 'rgba(255,255,255,0.06)' }}
+        style={{ background: 'var(--navy)', borderColor: 'rgba(37,99,235,0.15)' }}
       >
         <div className="min-w-0">
-          <Link href="/" className="font-bold text-lg" style={{ color: 'var(--amber)' }}>
+          <Link href="/" className="font-bold text-lg" style={{ color: 'var(--cobalt-bright)' }}>
             TutorLive
           </Link>
           <p className="truncate text-xs text-white/60">{user.name}</p>
@@ -57,12 +57,12 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
         className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r lg:flex"
         style={{
           background: 'var(--navy)',
-          borderColor: 'rgba(255,255,255,0.06)',
+          borderColor: 'rgba(37,99,235,0.15)',
         }}
       >
       {/* Logo */}
-      <div className="px-6 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <Link href="/" className="text-xl font-bold" style={{ color: 'var(--amber)' }}>
+      <div className="px-6 py-5 border-b" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
+        <Link href="/" className="text-xl font-bold" style={{ color: 'var(--cobalt-bright)' }}>
           TutorLive
         </Link>
         <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
@@ -86,7 +86,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
               )}
               style={
                 isActive
-                  ? { background: 'rgba(242,154,99,0.15)', color: 'var(--amber)' }
+                  ? { background: 'rgba(37,99,235,0.15)', color: 'var(--cobalt-bright)' }
                   : {}
               }
             >
@@ -119,7 +119,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
         className="fixed inset-x-0 bottom-0 z-50 flex overflow-x-auto border-t px-1 pt-2 lg:hidden"
         style={{
           background: 'var(--navy)',
-          borderColor: 'rgba(255,255,255,0.08)',
+          borderColor: 'rgba(37,99,235,0.15)',
           paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
         }}
       >
@@ -131,7 +131,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
               href={href}
               aria-current={isActive ? 'page' : undefined}
               className="flex min-w-[62px] flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-medium"
-              style={{ color: isActive ? 'var(--amber)' : 'rgba(255,255,255,0.62)' }}
+              style={{ color: isActive ? 'var(--cobalt-bright)' : 'rgba(255,255,255,0.62)' }}
             >
               <Icon size={18} />
               <span className="max-w-full truncate">{label}</span>

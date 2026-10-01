@@ -152,15 +152,15 @@ export default function OrganizationManager({
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#243149]">Tutorial Centers & Academies</h2>
-          <p className="text-xs text-[#8a8680] mt-1">
+          <h2 className="text-2xl font-bold" style={{ color: 'var(--ice)' }}>Tutorial Centers & Academies</h2>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
             Manage your tutorial organization, employ tutors, and organize students into specific tutorial groups.
           </p>
         </div>
         <button
           onClick={() => setShowCreateOrg(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm hover:opacity-90"
-          style={{ background: 'var(--navy)', color: 'var(--amber)' }}
+          className="gloss-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm hover:opacity-90"
+          style={{ background: 'var(--cobalt)', color: '#fff' }}
         >
           <Plus size={16} /> Create Tutorial Center
         </button>
@@ -168,34 +168,34 @@ export default function OrganizationManager({
 
       {showCreateOrg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 border border-[#e5ded3] shadow-xl space-y-4">
-            <h3 className="text-xl font-bold text-[#243149]">New Tutorial Center</h3>
-            <p className="text-xs text-[#8a8680]">
+          <div className="w-full max-w-md rounded-3xl p-6 shadow-xl space-y-4" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.2)' }}>
+            <h3 className="text-xl font-bold text-white">New Tutorial Center</h3>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
               Create an organization to add your tutors and group students together.
             </p>
 
             <form onSubmit={handleCreateOrg} className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-[#243149] mb-1">Organization Name</label>
+                <label className="block text-xs font-bold mb-1 text-white">Organization Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Apex Learning Academy"
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none focus:border-[#f29a63]"
-                  style={{ borderColor: 'var(--border-warm)' }}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs text-white focus:outline-none"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#243149] mb-1">Unique Center Code</label>
+                <label className="block text-xs font-bold mb-1 text-white">Unique Center Code</label>
                 <input
                   type="text"
                   placeholder="e.g. APEX-2025"
                   value={orgCode}
                   onChange={(e) => setOrgCode(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none focus:border-[#f29a63] font-mono uppercase"
-                  style={{ borderColor: 'var(--border-warm)' }}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs text-white focus:outline-none font-mono uppercase"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                   required
                 />
               </div>
@@ -204,14 +204,16 @@ export default function OrganizationManager({
                 <button
                   type="button"
                   onClick={() => setShowCreateOrg(false)}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-semibold border border-[#e5ded3] text-[#243149]"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-semibold"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-muted)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold text-[#243149] bg-[#f29a63]"
+                  className="gloss-btn flex-1 py-2.5 rounded-xl text-xs font-bold"
+                  style={{ background: 'var(--cobalt)', color: '#fff' }}
                 >
                   {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : 'Create Center'}
                 </button>
@@ -222,15 +224,16 @@ export default function OrganizationManager({
       )}
 
       {orgs.length === 0 ? (
-        <div className="rounded-3xl border border-[#e5ded3] bg-white p-12 text-center space-y-4">
-          <Building2 size={48} className="mx-auto text-[#8a8680]" />
-          <h3 className="text-xl font-bold text-[#243149]">No Tutorial Centers Created Yet</h3>
-          <p className="text-xs text-[#8a8680] max-w-md mx-auto">
+        <div className="glass-card rounded-3xl p-12 text-center space-y-4">
+          <Building2 size={48} className="mx-auto" style={{ color: 'var(--text-muted)' }} />
+          <h3 className="text-xl font-bold" style={{ color: 'var(--ice)' }}>No Tutorial Centers Created Yet</h3>
+          <p className="text-xs max-w-md mx-auto" style={{ color: 'var(--text-muted)' }}>
             Are you a lead tutor or founder of a tutorial school? Create a Tutorial Center to hire tutors and organize students into tutorial groups.
           </p>
           <button
             onClick={() => setShowCreateOrg(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-xs bg-[#243149] text-[#f29a63]"
+            className="gloss-btn inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-xs"
+            style={{ background: 'var(--cobalt)', color: '#fff' }}
           >
             <Plus size={16} /> Create Your Tutorial Center Now
           </button>
@@ -242,11 +245,11 @@ export default function OrganizationManager({
               <button
                 key={org.id}
                 onClick={() => setActiveOrgId(org.id)}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${
-                  activeOrgId === org.id
-                    ? 'bg-[#243149] text-[#f29a63] border-[#243149] shadow-sm'
-                    : 'bg-white text-[#243149] border-[#e5ded3] hover:bg-[#fbf8f1]'
-                }`}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
+                style={activeOrgId === org.id
+                  ? { background: 'var(--cobalt)', color: '#fff', border: '1px solid var(--cobalt)' }
+                  : { background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.08)' }
+                }
               >
                 🏢 {org.name}
               </button>
@@ -256,55 +259,57 @@ export default function OrganizationManager({
           {activeOrg && (
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
-                <div className="rounded-2xl border border-[#e5ded3] bg-white p-6 flex items-center justify-between">
+                <div className="glass-card rounded-2xl p-6 flex items-center justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-2xl font-bold text-[#243149]">{activeOrg.name}</h3>
-                      <span className="flex items-center gap-1 bg-amber-50 text-amber-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-200">
+                      <h3 className="text-2xl font-bold" style={{ color: 'var(--ice)' }}>{activeOrg.name}</h3>
+                      <span className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(37,99,235,0.12)', color: 'var(--cobalt-bright)', border: '1px solid rgba(37,99,235,0.2)' }}>
                         <ShieldCheck size={12} /> Verified Center
                       </span>
                     </div>
-                    <p className="text-xs text-[#8a8680] mt-1">
-                      Center Code: <span className="font-mono font-bold text-[#243149]">{activeOrg.code}</span>
+                    <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+                      Center Code: <span className="font-mono font-bold" style={{ color: 'var(--ice)' }}>{activeOrg.code}</span>
                     </p>
                   </div>
 
                   <button
                     onClick={() => copyOrgCode(activeOrg.code)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#fbf8f1] border border-[#e5ded3] text-xs font-bold text-[#243149]"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold"
+                    style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)', color: 'var(--ice)' }}
                   >
-                    {copiedCode === activeOrg.code ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                    {copiedCode === activeOrg.code ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
                     {copiedCode === activeOrg.code ? 'Code Copied!' : 'Share Center Code'}
                   </button>
                 </div>
 
-                <div className="rounded-2xl border border-[#e5ded3] bg-white p-6 space-y-4">
+                <div className="glass-card rounded-2xl p-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-base text-[#243149] flex items-center gap-2">
-                      <Users size={18} className="text-[#f29a63]" /> Employed Tutors & Members ({activeOrg.members?.length || 0})
+                    <h4 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                      <Users size={18} style={{ color: 'var(--cobalt-bright)' }} /> Employed Tutors & Members ({activeOrg.members?.length || 0})
                     </h4>
                   </div>
 
-                  <div className="divide-y divide-[#e5ded3]">
+                  <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     {activeOrg.members?.map((m: any) => (
                       <div key={m.id} className="py-3 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#243149] text-[#f29a63] font-bold flex items-center justify-center text-xs">
+                          <div className="w-8 h-8 rounded-full font-bold flex items-center justify-center text-xs" style={{ background: 'var(--navy-light)', color: 'var(--cobalt-bright)' }}>
                             {m.user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                           </div>
                           <div>
-                            <div className="font-bold text-[#243149]">{m.user.name}</div>
-                            <div className="text-[11px] text-[#8a8680]">{m.user.email}</div>
+                            <div className="font-bold" style={{ color: 'var(--ice)' }}>{m.user.name}</div>
+                            <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{m.user.email}</div>
                           </div>
                         </div>
                         <span
                           className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
                             m.role === 'FOUNDER'
-                              ? 'bg-purple-100 text-purple-700'
+                              ? 'bg-purple-500/15 text-purple-400'
                               : m.role === 'TUTOR'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-gray-100 text-gray-700'
+                              ? 'text-blue-400'
+                              : 'text-gray-400'
                           }`}
+                          style={m.role === 'TUTOR' ? { background: 'rgba(37,99,235,0.12)' } : m.role !== 'FOUNDER' ? { background: 'rgba(255,255,255,0.08)' } : {}}
                         >
                           {m.role}
                         </span>
@@ -313,20 +318,20 @@ export default function OrganizationManager({
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-[#e5ded3] bg-white p-6 space-y-4">
-                  <h4 className="font-bold text-base text-[#243149] flex items-center gap-2">
-                    <BookOpen size={18} className="text-[#f29a63]" /> Tutorial Groups ({activeOrg.tutorialGroups?.length || 0})
+                <div className="glass-card rounded-2xl p-6 space-y-4">
+                  <h4 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                    <BookOpen size={18} style={{ color: 'var(--cobalt-bright)' }} /> Tutorial Groups ({activeOrg.tutorialGroups?.length || 0})
                   </h4>
 
                   {activeOrg.tutorialGroups?.length === 0 ? (
-                    <p className="text-xs text-[#8a8680] py-4">No tutorial groups created yet under this center.</p>
+                    <p className="text-xs py-4" style={{ color: 'var(--text-muted)' }}>No tutorial groups created yet under this center.</p>
                   ) : (
                     <div className="grid md:grid-cols-2 gap-4">
                       {activeOrg.tutorialGroups?.map((g: any) => (
-                        <div key={g.id} className="p-4 rounded-xl border border-[#e5ded3] bg-[#fbf8f1] space-y-2">
-                          <div className="font-bold text-sm text-[#243149]">{g.name}</div>
-                          {g.description && <p className="text-xs text-[#8a8680]">{g.description}</p>}
-                          <div className="text-[11px] text-[#f29a63] font-semibold">
+                        <div key={g.id} className="p-4 rounded-xl space-y-2" style={{ background: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.12)' }}>
+                          <div className="font-bold text-sm" style={{ color: 'var(--ice)' }}>{g.name}</div>
+                          {g.description && <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{g.description}</p>}
+                          <div className="text-[11px] font-semibold" style={{ color: 'var(--cobalt-bright)' }}>
                             Tutor: {g.tutor ? g.tutor.name : 'Unassigned'}
                           </div>
                         </div>
@@ -339,31 +344,33 @@ export default function OrganizationManager({
               <div className="space-y-6">
                 <form
                   onSubmit={handleAddMember}
-                  className="rounded-2xl border border-[#e5ded3] bg-white p-5 space-y-4"
+                  className="glass-card rounded-2xl p-5 space-y-4"
                 >
-                  <h4 className="font-bold text-sm text-[#243149] flex items-center gap-2">
-                    <UserPlus size={16} className="text-[#f29a63]" /> Employ a Tutor to Center
+                  <h4 className="font-bold text-sm flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                    <UserPlus size={16} style={{ color: 'var(--cobalt-bright)' }} /> Employ a Tutor to Center
                   </h4>
-                  <p className="text-[11px] text-[#8a8680]">
+                  <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                     Enter the registered email address of the tutor to add them to your tutorial organization.
                   </p>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#243149] mb-1">Tutor Email</label>
+                    <label className="block text-[11px] font-bold mb-1" style={{ color: 'var(--ice)' }}>Tutor Email</label>
                     <input
                       type="email"
                       placeholder="tutor@example.com"
                       value={tutorEmail}
                       onChange={(e) => setTutorEmail(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#e5ded3] text-xs focus:outline-none focus:border-[#f29a63]"
+                      className="w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none"
+                      style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#243149] mb-1">Role</label>
+                    <label className="block text-[11px] font-bold mb-1" style={{ color: 'var(--ice)' }}>Role</label>
                     <select
                       value={tutorRole}
                       onChange={(e) => setTutorRole(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#e5ded3] text-xs focus:outline-none focus:border-[#f29a63]"
+                      className="w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none"
+                      style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                     >
                       <option value="TUTOR">Employed Tutor</option>
                       <option value="STUDENT">Student</option>
@@ -372,7 +379,8 @@ export default function OrganizationManager({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 rounded-xl font-bold text-xs bg-[#243149] text-[#f29a63] shadow-sm"
+                    className="gloss-btn w-full py-2.5 rounded-xl font-bold text-xs shadow-sm"
+                    style={{ background: 'var(--cobalt)', color: '#fff' }}
                   >
                     Add to Organization
                   </button>
@@ -380,28 +388,30 @@ export default function OrganizationManager({
 
                 <form
                   onSubmit={handleCreateGroup}
-                  className="rounded-2xl border border-[#e5ded3] bg-white p-5 space-y-4"
+                  className="glass-card rounded-2xl p-5 space-y-4"
                 >
-                  <h4 className="font-bold text-sm text-[#243149] flex items-center gap-2">
-                    <Plus size={16} className="text-[#f29a63]" /> Create Tutorial Group
+                  <h4 className="font-bold text-sm flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                    <Plus size={16} style={{ color: 'var(--cobalt-bright)' }} /> Create Tutorial Group
                   </h4>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#243149] mb-1">Group Class Name</label>
+                    <label className="block text-[11px] font-bold mb-1" style={{ color: 'var(--ice)' }}>Group Class Name</label>
                     <input
                       type="text"
                       placeholder="e.g. WAEC Further Mathematics"
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#e5ded3] text-xs focus:outline-none focus:border-[#f29a63]"
+                      className="w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none"
+                      style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#243149] mb-1">Assigned Tutor</label>
+                    <label className="block text-[11px] font-bold mb-1" style={{ color: 'var(--ice)' }}>Assigned Tutor</label>
                     <select
                       value={assignedTutorId}
                       onChange={(e) => setAssignedTutorId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#e5ded3] text-xs focus:outline-none focus:border-[#f29a63]"
+                      className="w-full px-3 py-2 rounded-xl text-xs text-white focus:outline-none"
+                      style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                     >
                       <option value="">Select an employed tutor...</option>
                       {activeOrg.members
@@ -416,7 +426,8 @@ export default function OrganizationManager({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 rounded-xl font-bold text-xs bg-[#f29a63] text-[#243149] shadow-sm"
+                    className="gloss-btn w-full py-2.5 rounded-xl font-bold text-xs shadow-sm"
+                    style={{ background: 'var(--rose)', color: '#fff' }}
                   >
                     Create Tutorial Group
                   </button>

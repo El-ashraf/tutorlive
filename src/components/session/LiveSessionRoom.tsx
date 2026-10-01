@@ -193,30 +193,30 @@ export default function LiveSessionRoom({
   }
 
   return (
-    <div className="h-[100dvh] w-full flex flex-col overflow-hidden bg-[#1e273a] text-white">
+    <div className="h-[100dvh] w-full flex flex-col overflow-hidden text-white" style={{ background: 'var(--navy)' }}>
       {/* ── Top Header Bar ── */}
-      <header className="min-h-14 sm:h-16 px-3 sm:px-6 py-2 sm:py-0 border-b border-[#344158] flex items-center justify-between gap-2 bg-[#243149] shrink-0">
+      <header className="min-h-14 sm:h-16 px-3 sm:px-6 py-2 sm:py-0 flex items-center justify-between gap-2 shrink-0" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
         <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-          <Link href="/dashboard" className="shrink-0 font-bold text-base sm:text-lg text-[#f29a63]">
+          <Link href="/dashboard" className="shrink-0 font-bold text-base sm:text-lg" style={{ color: 'var(--cobalt-bright)' }}>
             TutorLive
           </Link>
-          <div className="hidden sm:block h-4 w-px bg-[#344158]" />
+          <div className="hidden sm:block h-4 w-px" style={{ background: 'rgba(37,99,235,0.2)' }} />
           <div className="min-w-0">
             <h1 className="max-w-[34vw] sm:max-w-none truncate font-semibold text-xs sm:text-sm text-white">
               {booking?.subject || 'Live Tutoring Class'}
             </h1>
-            <p className="hidden sm:block text-xs text-[#aeb9c7]">
-              Room Code: <span className="font-mono text-[#f29a63] font-bold">{roomId}</span>
+            <p className="hidden sm:block text-xs" style={{ color: 'var(--text-muted)' }}>
+              Room Code: <span className="font-mono font-bold" style={{ color: 'var(--cobalt-bright)' }}>{roomId}</span>
             </p>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-semibold" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             LIVE
           </div>
         </div>
 
         {/* View Layout Selector */}
-        <div className="hidden md:flex items-center gap-1 bg-[#1e273a] p-1 rounded-xl border border-[#344158]">
+        <div className="hidden md:flex items-center gap-1 p-1 rounded-xl" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
           {[
             { id: 'split', label: 'Split View', icon: LayoutTemplate },
             { id: 'whiteboard', label: 'Whiteboard Focus', icon: PenTool },
@@ -227,9 +227,10 @@ export default function LiveSessionRoom({
               onClick={() => setViewMode(id as any)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 viewMode === id
-                  ? 'bg-[#f29a63] text-[#243149]'
-                  : 'text-[#aeb9c7] hover:text-white'
+                  ? 'text-white'
+                  : 'hover:text-white'
               }`}
+              style={viewMode === id ? { background: 'var(--cobalt)', color: '#fff' } : { color: 'var(--text-muted)' }}
             >
               <Icon size={14} />
               {label}
@@ -242,7 +243,8 @@ export default function LiveSessionRoom({
           <button
             onClick={copyRoomLink}
             aria-label="Share room link"
-            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl bg-[#1e273a] text-xs font-semibold text-[#aeb9c7] hover:text-white border border-[#344158] transition-all"
+            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-semibold hover:text-white transition-all"
+            style={{ background: 'var(--navy)', color: 'var(--text-muted)', border: '1px solid rgba(37,99,235,0.15)' }}
           >
             {copied ? <Check size={14} className="text-emerald-400" /> : <Share2 size={14} />}
             <span className="hidden sm:inline">{copied ? 'Link Copied' : 'Share Link'}</span>
@@ -252,7 +254,8 @@ export default function LiveSessionRoom({
             <button
               onClick={handleEndSession}
               aria-label="End session"
-              className="flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-sm transition-all"
+              className="gloss-btn flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl text-white text-xs font-bold shadow-sm transition-all"
+              style={{ background: 'var(--rose)', color: '#fff' }}
             >
               <PhoneOff size={14} /> <span className="hidden sm:inline">End Session</span>
             </button>
@@ -260,7 +263,8 @@ export default function LiveSessionRoom({
             <button
               onClick={handleLeaveRoom}
               aria-label="Leave class"
-              className="flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl bg-red-500/15 text-red-400 text-xs font-semibold hover:bg-red-500/25 border border-red-500/20 transition-all"
+              className="flex items-center gap-1.5 p-2 sm:px-4 sm:py-1.5 rounded-xl text-xs font-semibold transition-all"
+              style={{ background: 'rgba(244,63,94,0.15)', color: 'var(--rose-bright)', border: '1px solid rgba(244,63,94,0.2)' }}
             >
               <LogOut size={14} /> <span className="hidden sm:inline">Leave Class</span>
             </button>
@@ -268,7 +272,7 @@ export default function LiveSessionRoom({
         </div>
       </header>
 
-      <div className="md:hidden flex shrink-0 items-center gap-1 border-b border-[#344158] bg-[#243149] p-1.5">
+      <div className="md:hidden flex shrink-0 items-center gap-1 p-1.5" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
         {[
           { id: 'split', label: 'Split', icon: LayoutTemplate },
           { id: 'whiteboard', label: 'Board', icon: PenTool },
@@ -277,9 +281,8 @@ export default function LiveSessionRoom({
           <button
             key={id}
             onClick={() => setViewMode(id as any)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold ${
-              viewMode === id ? 'bg-[#f29a63] text-[#243149]' : 'text-[#aeb9c7]'
-            }`}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold`}
+            style={viewMode === id ? { background: 'var(--cobalt)', color: '#fff' } : { color: 'var(--text-muted)' }}
           >
             <Icon size={15} /> {label}
           </button>
@@ -287,7 +290,7 @@ export default function LiveSessionRoom({
       </div>
 
       {/* ── Scrollable / Expandable Interactive Layout ── */}
-      <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden p-2 sm:p-4 gap-3 sm:gap-4 bg-[#1e273a]">
+      <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden p-2 sm:p-4 gap-3 sm:gap-4" style={{ background: 'var(--navy)' }}>
         {/* Main Classroom Workspace Container */}
         <div className="min-w-0 flex-1 flex flex-col md:flex-row gap-3 sm:gap-4 pr-1">
           {/* Whiteboard Container (Always mounted in DOM) */}
@@ -327,8 +330,8 @@ export default function LiveSessionRoom({
         </div>
 
         {/* ── Right Side Panel (Chat, Copilot, Notes) ── */}
-        <div className="w-full h-[42vh] min-h-[280px] flex flex-col bg-[#243149] rounded-2xl border border-[#344158] overflow-hidden shrink-0 lg:w-80 lg:h-full lg:min-h-0">
-          <div className="flex items-center border-b border-[#344158] bg-[#1e273a]">
+        <div className="w-full h-[42vh] min-h-[280px] flex flex-col rounded-2xl overflow-hidden shrink-0 lg:w-80 lg:h-full lg:min-h-0" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
+          <div className="flex items-center" style={{ background: 'var(--navy)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
             {[
               { id: 'chat', label: 'Chat', icon: MessageSquare },
               { id: 'copilot', label: 'AI Copilot', icon: Sparkles },
@@ -337,11 +340,11 @@ export default function LiveSessionRoom({
               <button
                 key={id}
                 onClick={() => setActiveTab(id as any)}
-                className={`flex-1 py-3 flex items-center justify-center gap-1.5 text-xs font-semibold border-b-2 transition-all ${
-                  activeTab === id
-                    ? 'border-[#f29a63] text-[#f29a63] bg-[#243149]'
-                    : 'border-transparent text-[#aeb9c7] hover:text-white'
-                }`}
+                className="flex-1 py-3 flex items-center justify-center gap-1.5 text-xs font-semibold border-b-2 transition-all"
+                style={activeTab === id
+                  ? { borderColor: 'var(--cobalt)', color: 'var(--cobalt-bright)', background: 'var(--navy-light)' }
+                  : { borderColor: 'transparent', color: 'var(--text-muted)' }
+                }
               >
                 <Icon size={14} />
                 {label}
@@ -354,7 +357,7 @@ export default function LiveSessionRoom({
               <div className="flex-1 flex flex-col justify-between h-full">
                 <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                   {messages.length === 0 ? (
-                    <div className="text-center py-12 text-[#aeb9c7] text-xs">
+                    <div className="text-center py-12 text-xs" style={{ color: 'var(--text-muted)' }}>
                       No messages yet. Say hello to start!
                     </div>
                   ) : (
@@ -365,15 +368,19 @@ export default function LiveSessionRoom({
                           key={msg.id}
                           className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
                         >
-                          <span className="text-[10px] text-[#aeb9c7] mb-1">
+                          <span className="text-[10px] mb-1" style={{ color: 'var(--text-muted)' }}>
                             {msg.senderName} · {msg.timestamp}
                           </span>
                           <div
                             className={`px-3 py-2 rounded-2xl text-xs max-w-[85%] leading-relaxed ${
                               isMe
-                                ? 'bg-[#f29a63] text-[#243149] font-medium'
-                                : 'bg-[#344158] text-white'
+                                ? 'font-medium'
+                                : 'text-white'
                             }`}
+                            style={isMe
+                              ? { background: 'var(--cobalt)', color: '#fff' }
+                              : { background: 'var(--navy-card)', color: '#fff' }
+                            }
                           >
                             {msg.text}
                           </div>
@@ -389,13 +396,15 @@ export default function LiveSessionRoom({
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 px-3 py-2 rounded-xl bg-[#1e273a] text-xs text-white border border-[#344158] focus:outline-none focus:border-[#f29a63]"
+                    className="flex-1 px-3 py-2 rounded-xl text-xs text-white focus:outline-none"
+                    style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                   />
                   <button
                     type="submit"
                     disabled={chatStatus !== 'SUBSCRIBED'}
                     aria-label="Send chat message"
-                    className="p-2 rounded-xl bg-[#f29a63] text-[#243149] font-bold hover:opacity-90"
+                    className="gloss-btn p-2 rounded-xl font-bold"
+                    style={{ background: 'var(--cobalt)', color: '#fff' }}
                   >
                     <Send size={14} />
                   </button>
@@ -411,22 +420,22 @@ export default function LiveSessionRoom({
             )}
 
             {activeTab === 'copilot' && (
-              <div className="flex min-h-0 flex-1 flex-col text-xs text-[#aeb9c7]">
-                <div className="p-3 bg-[#1e273a] rounded-xl border border-[#344158]">
+              <div className="flex min-h-0 flex-1 flex-col text-xs" style={{ color: 'var(--text-muted)' }}>
+                <div className="p-3 rounded-xl" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
                   <p className="font-semibold text-white mb-1 flex items-center gap-1.5 text-xs">
-                    <Sparkles size={14} className="text-[#f29a63]" /> AI Tutor Assistant
+                    <Sparkles size={14} style={{ color: 'var(--cobalt-bright)' }} /> AI Tutor Assistant
                   </p>
-                  <p className="text-[11px] text-[#aeb9c7]">
+                  <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                     Ask for a clear explanation, worked example, or summary related to {booking?.subject || 'your lesson'}.
                   </p>
-                  <p className="mt-1 text-[10px] text-[#aeb9c7]">
+                  <p className="mt-1 text-[10px]" style={{ color: 'var(--text-muted)' }}>
                     Powered by Gemini. Avoid entering private or sensitive information.
                   </p>
                 </div>
-                <div className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-xl border border-[#344158] bg-[#1e273a] p-3">
+                <div className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto rounded-xl p-3" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
                   {copilotMessages.length === 0 ? (
                     <div className="flex flex-1 flex-col items-center justify-center text-center">
-                      <Sparkles size={24} className="mb-2 text-[#f29a63]" />
+                      <Sparkles size={24} className="mb-2" style={{ color: 'var(--cobalt-bright)' }} />
                       <p className="text-xs font-medium text-white">Ask your AI Copilot</p>
                       <p className="mt-1 text-[10px]">The Copilot can explain topics and work through examples.</p>
                     </div>
@@ -435,14 +444,18 @@ export default function LiveSessionRoom({
                       key={`${message.role}-${index}`}
                       className={`max-w-[90%] whitespace-pre-wrap rounded-xl px-3 py-2 text-xs leading-relaxed ${
                         message.role === 'user'
-                          ? 'self-end bg-[#f29a63] font-medium text-[#243149]'
-                          : 'self-start bg-[#344158] text-white'
+                          ? 'self-end font-medium'
+                          : 'self-start text-white'
                       }`}
+                      style={message.role === 'user'
+                        ? { background: 'var(--cobalt)', color: '#fff' }
+                        : { background: 'var(--navy-card)', color: '#fff' }
+                      }
                     >
                       {message.text}
                     </div>
                   ))}
-                  {copilotLoading && <p className="text-[10px] text-[#aeb9c7]">Thinking…</p>}
+                  {copilotLoading && <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Thinking…</p>}
                   {copilotError && <p role="alert" className="text-[10px] text-red-300">{copilotError}</p>}
                 </div>
                 <form onSubmit={handleAskCopilot} className="mt-3 flex gap-2">
@@ -454,13 +467,15 @@ export default function LiveSessionRoom({
                     disabled={copilotLoading}
                     placeholder="Ask a question…"
                     aria-label="Ask the AI Copilot"
-                    className="min-w-0 flex-1 rounded-xl border border-[#344158] bg-[#1e273a] px-3 py-2 text-xs text-white focus:border-[#f29a63] focus:outline-none"
+                    className="min-w-0 flex-1 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                    style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                   />
                   <button
                     type="submit"
                     disabled={copilotLoading || !copilotInput.trim()}
                     aria-label="Send question to AI Copilot"
-                    className="rounded-xl bg-[#f29a63] p-2 font-bold text-[#243149] hover:opacity-90 disabled:opacity-50"
+                    className="rounded-xl p-2 font-bold disabled:opacity-50"
+                    style={{ background: 'var(--cobalt)', color: '#fff' }}
                   >
                     <Send size={14} />
                   </button>
@@ -475,7 +490,8 @@ export default function LiveSessionRoom({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Jot down formulas, summary points, or homework details here..."
-                  className="flex-1 w-full p-3 rounded-xl bg-[#1e273a] text-xs text-white border border-[#344158] focus:outline-none focus:border-[#f29a63] resize-none leading-relaxed"
+                  className="flex-1 w-full p-3 rounded-xl text-xs text-white focus:outline-none resize-none leading-relaxed"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                 />
               </div>
             )}

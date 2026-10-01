@@ -60,7 +60,7 @@ export default function JitsiVideoCall({
           SHOW_JITSI_WATERMARK: false,
           SHOW_WATERMARK_FOR_GUESTS: false,
           TOOLBAR_ALWAYS_VISIBLE: true,
-          DEFAULT_BACKGROUND: '#243149',
+          DEFAULT_BACKGROUND: '#0A0E14',
         },
       }
 
@@ -98,11 +98,11 @@ export default function JitsiVideoCall({
   }, [roomId, userName, userEmail])
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[#243149] border border-[#344158]">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
       {loading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#243149] text-white z-10">
-          <Loader2 size={32} className="animate-spin text-[#f29a63] mb-3" />
-          <p className="text-sm font-medium text-[#aeb9c7]">Connecting to video call...</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10" style={{ background: 'var(--navy)' }}>
+          <Loader2 size={32} className="animate-spin mb-3" style={{ color: 'var(--cobalt-bright)' }} />
+          <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Connecting to video call...</p>
         </div>
       )}
       <div ref={containerRef} className="w-full h-full min-h-[350px]" />

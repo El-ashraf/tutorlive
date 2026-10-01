@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--ice)' }}>
           Account Settings
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -17,7 +17,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border p-4 bg-white" style={{ borderColor: 'var(--border-warm)' }}>
+      <div className="glass-card rounded-2xl p-4">
         <UserProfile routing="hash" />
       </div>
     </div>

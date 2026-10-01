@@ -227,9 +227,9 @@ export default function WebRtcVideoCall({
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#1e273a] rounded-2xl overflow-hidden border border-[#344158] relative">
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 p-2 relative overflow-hidden bg-[#182030]">
-        <div className="relative w-full h-full bg-[#243149] rounded-xl overflow-hidden flex items-center justify-center border border-[#344158]">
+    <div className="flex flex-col h-full w-full rounded-2xl overflow-hidden relative" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2 p-2 relative overflow-hidden" style={{ background: 'var(--navy)' }}>
+        <div className="relative w-full h-full rounded-xl overflow-hidden flex items-center justify-center" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
           <video
             ref={remoteVideoRef}
             autoPlay
@@ -237,12 +237,12 @@ export default function WebRtcVideoCall({
             className={`w-full h-full object-cover ${remoteConnected ? 'block' : 'hidden'}`}
           />
           {!remoteConnected && (
-            <div className="flex flex-col items-center justify-center text-[#aeb9c7] text-center p-4">
-              <div className="w-16 h-16 rounded-full bg-[#344158] flex items-center justify-center mb-3">
-                <User size={32} className="text-[#f29a63]" />
+            <div className="flex flex-col items-center justify-center text-center p-4" style={{ color: 'var(--text-muted)' }}>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3" style={{ background: 'var(--navy-card)' }}>
+                <User size={32} style={{ color: 'var(--cobalt-bright)' }} />
               </div>
               <p className="text-xs font-semibold text-white">Waiting for participant...</p>
-              <p className="text-[10px] text-[#aeb9c7] mt-1">Share room link to connect</p>
+              <p className="text-[10px] mt-1" style={{ color: 'var(--text-muted)' }}>Share room link to connect</p>
             </div>
           )}
           <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-md font-semibold">
@@ -250,7 +250,7 @@ export default function WebRtcVideoCall({
           </div>
         </div>
 
-        <div className="relative w-full h-full bg-[#243149] rounded-xl overflow-hidden flex items-center justify-center border border-[#344158]">
+        <div className="relative w-full h-full rounded-xl overflow-hidden flex items-center justify-center" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
           <video
             ref={localVideoRef}
             autoPlay
@@ -259,8 +259,8 @@ export default function WebRtcVideoCall({
             className={`w-full h-full object-cover ${isCamOn ? 'block' : 'hidden'}`}
           />
           {!isCamOn && (
-            <div className="flex flex-col items-center justify-center text-[#aeb9c7]">
-              <div className="w-14 h-14 rounded-full bg-[#344158] flex items-center justify-center mb-2">
+            <div className="flex flex-col items-center justify-center" style={{ color: 'var(--text-muted)' }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mb-2" style={{ background: 'var(--navy-card)' }}>
                 <VideoOff size={24} className="text-red-400" />
               </div>
               <p className="text-xs font-semibold">Camera Turned Off</p>
@@ -268,17 +268,18 @@ export default function WebRtcVideoCall({
           )}
           <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-md font-semibold flex items-center gap-1">
             <span>You ({userName})</span>
-            {isScreenSharing && <span className="text-[#f29a63] font-bold">· Sharing Screen</span>}
+            {isScreenSharing && <span className="font-bold" style={{ color: 'var(--cobalt-bright)' }}>· Sharing Screen</span>}
           </div>
         </div>
       </div>
 
-      <div className="h-14 bg-[#243149] border-t border-[#344158] px-4 flex items-center justify-center gap-3">
+      <div className="h-14 px-4 flex items-center justify-center gap-3" style={{ background: 'var(--navy-light)', borderTop: '1px solid rgba(37,99,235,0.15)' }}>
         <button
           onClick={toggleMic}
           className={`p-2.5 rounded-full transition-all ${
-            isMicOn ? 'bg-[#344158] text-white hover:bg-[#43526e]' : 'bg-red-500 text-white'
+            isMicOn ? 'text-white' : 'bg-red-500 text-white'
           }`}
+          style={isMicOn ? { background: 'var(--navy-card)' } : {}}
           title={isMicOn ? 'Mute Mic' : 'Unmute Mic'}
         >
           {isMicOn ? <Mic size={18} /> : <MicOff size={18} />}
@@ -287,8 +288,9 @@ export default function WebRtcVideoCall({
         <button
           onClick={toggleCam}
           className={`p-2.5 rounded-full transition-all ${
-            isCamOn ? 'bg-[#344158] text-white hover:bg-[#43526e]' : 'bg-red-500 text-white'
+            isCamOn ? 'text-white' : 'bg-red-500 text-white'
           }`}
+          style={isCamOn ? { background: 'var(--navy-card)' } : {}}
           title={isCamOn ? 'Turn Off Camera' : 'Turn On Camera'}
         >
           {isCamOn ? <VideoIcon size={18} /> : <VideoOff size={18} />}
@@ -296,9 +298,8 @@ export default function WebRtcVideoCall({
 
         <button
           onClick={toggleScreenShare}
-          className={`p-2.5 rounded-full transition-all ${
-            isScreenSharing ? 'bg-[#f29a63] text-[#243149] font-bold' : 'bg-[#344158] text-white hover:bg-[#43526e]'
-          }`}
+          className="p-2.5 rounded-full transition-all"
+          style={isScreenSharing ? { background: 'var(--cobalt)', color: '#fff' } : { background: 'var(--navy-card)', color: '#fff' }}
           title={isScreenSharing ? 'Stop Screen Sharing' : 'Share Screen'}
         >
           {isScreenSharing ? <MonitorOff size={18} /> : <Monitor size={18} />}

@@ -45,19 +45,19 @@ export default async function TutorsPage({
   ]
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--cream)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--navy)' }}>
       <header
-        className="border-b py-10 sm:py-12 px-4 sm:px-6 text-center"
-        style={{ background: 'var(--navy)', borderColor: 'rgba(255,255,255,0.08)' }}
+        className="border-b py-10 sm:py-12 px-4 sm:px-6 text-center hero-glow"
+        style={{ background: 'var(--navy)', borderColor: 'rgba(37,99,235,0.15)' }}
       >
         <div className="max-w-4xl mx-auto">
-          <Link href="/" className="inline-block text-sm font-semibold mb-4 text-[#f29a63]">
+          <Link href="/" className="inline-block text-sm font-semibold mb-4" style={{ color: 'var(--cobalt-bright)' }}>
             ← Back to Home
           </Link>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
             Find Expert Tutors
           </h1>
-          <p className="text-base max-w-xl mx-auto text-white/65">
+          <p className="text-base max-w-xl mx-auto" style={{ color: 'var(--text-muted)' }}>
             Book 1-on-1 live interactive sessions with verified tutors in science, math, coding, and more.
           </p>
 
@@ -66,8 +66,8 @@ export default async function TutorsPage({
               href="/tutors"
               className="px-4 py-2 rounded-full text-xs font-semibold transition-all"
               style={{
-                background: !subject ? 'var(--amber)' : 'rgba(255,255,255,0.1)',
-                color: !subject ? 'var(--navy)' : '#fff',
+                background: !subject ? 'var(--cobalt)' : 'rgba(255,255,255,0.08)',
+                color: !subject ? '#fff' : 'var(--text-muted)',
               }}
             >
               All Subjects
@@ -78,8 +78,8 @@ export default async function TutorsPage({
                 href={`/tutors?subject=${encodeURIComponent(s)}`}
                 className="px-4 py-2 rounded-full text-xs font-semibold transition-all"
                 style={{
-                  background: subject === s ? 'var(--amber)' : 'rgba(255,255,255,0.1)',
-                  color: subject === s ? 'var(--navy)' : '#fff',
+                  background: subject === s ? 'var(--cobalt)' : 'rgba(255,255,255,0.08)',
+                  color: subject === s ? '#fff' : 'var(--text-muted)',
                 }}
               >
                 {s}
@@ -91,15 +91,12 @@ export default async function TutorsPage({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {tutors.length === 0 ? (
-          <div
-            className="text-center py-16 rounded-2xl border bg-white"
-            style={{ borderColor: 'var(--border-warm)' }}
-          >
-            <Search size={48} className="mx-auto mb-4 text-[#8a8680]" />
-            <h3 className="text-xl font-bold mb-2 text-[#243149]">
+          <div className="glass-card text-center py-16 rounded-2xl">
+            <Search size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+            <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--ice)' }}>
               No tutors found
             </h3>
-            <p className="text-sm text-[#8a8680]">
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
               {subject ? `No tutors currently available for "${subject}".` : 'No tutors registered yet.'}
             </p>
           </div>
@@ -110,13 +107,13 @@ export default async function TutorsPage({
               return (
                 <div
                   key={tutor.id}
-                  className="rounded-2xl border p-6 flex flex-col justify-between transition-all hover:shadow-md bg-white"
-                  style={{ borderColor: 'var(--border-warm)' }}
+                  className="glass-card rounded-2xl p-6 flex flex-col justify-between transition-all hover:bg-white/8"
                 >
                   <div>
                     <div className="flex items-start gap-4 mb-4">
                       <div
-                        className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0 bg-[#243149] text-[#f29a63]"
+                        className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg flex-shrink-0"
+                        style={{ background: 'var(--navy-light)', color: 'var(--cobalt-bright)' }}
                       >
                         {tutor.name
                           .split(' ')
@@ -126,14 +123,14 @@ export default async function TutorsPage({
                           .slice(0, 2)}
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg text-[#243149]">
+                        <h3 className="font-bold text-lg" style={{ color: 'var(--ice)' }}>
                           {tutor.name}
                         </h3>
-                        <p className="text-xs line-clamp-1 text-[#f29a63]">
+                        <p className="text-xs line-clamp-1" style={{ color: 'var(--cobalt-bright)' }}>
                           {profile?.headline || 'Expert Tutor'}
                         </p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-[#8a8680]">
-                          <span className="flex items-center gap-1 font-semibold text-amber-600">
+                        <div className="flex items-center gap-2 mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+                          <span className="flex items-center gap-1 font-semibold" style={{ color: '#fbbf24' }}>
                             <Star size={14} className="fill-amber-400 text-amber-400" />
                             {profile?.avgRating ? profile.avgRating.toFixed(1) : 'New'}
                           </span>
@@ -143,7 +140,7 @@ export default async function TutorsPage({
                       </div>
                     </div>
 
-                    <p className="text-sm line-clamp-3 mb-4 leading-relaxed text-[#8a8680]">
+                    <p className="text-sm line-clamp-3 mb-4 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                       {tutor.bio || 'Experienced tutor dedicated to helping students succeed in their learning goals.'}
                     </p>
 
@@ -152,13 +149,14 @@ export default async function TutorsPage({
                         tutor.subjects.map((sub: string) => (
                           <span
                             key={sub}
-                            className="text-xs px-2.5 py-1 rounded-md font-medium bg-[#f3ede2] text-[#243149]"
+                            className="text-xs px-2.5 py-1 rounded-md font-medium"
+                            style={{ background: 'rgba(37,99,235,0.12)', color: 'var(--cobalt-bright)' }}
                           >
                             {sub}
                           </span>
                         ))
                       ) : (
-                        <span className="text-xs px-2.5 py-1 rounded-md font-medium bg-[#f3ede2] text-[#243149]">
+                        <span className="text-xs px-2.5 py-1 rounded-md font-medium" style={{ background: 'rgba(37,99,235,0.12)', color: 'var(--cobalt-bright)' }}>
                           General Tutoring
                         </span>
                       )}
@@ -166,17 +164,19 @@ export default async function TutorsPage({
                   </div>
 
                   <div
-                    className="pt-4 border-t flex items-center justify-between mt-auto border-[#e5ded3]"
+                    className="pt-4 border-t flex items-center justify-between mt-auto"
+                    style={{ borderColor: 'rgba(255,255,255,0.06)' }}
                   >
                     <div>
-                      <span className="text-xs text-[#8a8680]">Rate</span>
-                      <div className="font-bold text-lg text-[#243149]">
+                      <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Rate</span>
+                      <div className="font-bold text-lg" style={{ color: 'var(--ice)' }}>
                         {tutor.hourlyRate ? `$${tutor.hourlyRate}/hr` : 'Free'}
                       </div>
                     </div>
                     <Link
                       href={`/tutors/${tutor.id}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-transform hover:scale-105 bg-[#243149] text-[#f29a63]"
+                      className="gloss-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-transform hover:scale-105"
+                      style={{ background: 'var(--cobalt)', color: '#fff' }}
                     >
                       Book Session <ArrowRight size={14} />
                     </Link>

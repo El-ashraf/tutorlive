@@ -30,19 +30,19 @@ export default function OnboardingPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: 'var(--cream)' }}
+      className="min-h-screen flex items-center justify-center px-4 hero-glow"
+      style={{ background: 'var(--navy)' }}
     >
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-10">
           <div
             className="inline-block text-2xl font-bold mb-4"
-            style={{ color: 'var(--navy)' }}
+            style={{ color: 'var(--cobalt-bright)' }}
           >
             TutorLive
           </div>
-          <h1 className="text-3xl font-bold mb-3" style={{ color: 'var(--navy)' }}>
+          <h1 className="text-3xl font-bold mb-3 text-white">
             Welcome{user?.firstName ? `, ${user.firstName}` : ''}! 👋
           </h1>
           <p style={{ color: 'var(--text-muted)' }}>
@@ -69,28 +69,28 @@ export default function OnboardingPage() {
             <button
               key={value}
               onClick={() => setRole(value)}
-              className="p-5 sm:p-6 rounded-2xl border-2 text-left transition-all hover:shadow-md"
+              className="p-5 sm:p-6 rounded-2xl text-left transition-all"
               style={{
-                background: role === value ? 'var(--navy)' : '#fff',
-                borderColor: role === value ? 'var(--navy)' : 'var(--border-warm)',
-                color: role === value ? '#fff' : 'var(--navy)',
+                background: role === value ? 'rgba(37,99,235,0.15)' : 'rgba(255,255,255,0.04)',
+                border: role === value ? '2px solid var(--cobalt)' : '1px solid rgba(255,255,255,0.08)',
+                color: '#fff',
               }}
             >
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                 style={{
-                  background: role === value ? 'rgba(242,154,99,0.2)' : 'rgba(36,49,73,0.08)',
+                  background: role === value ? 'rgba(37,99,235,0.2)' : 'rgba(255,255,255,0.06)',
                 }}
               >
                 <Icon
                   size={24}
-                  style={{ color: role === value ? 'var(--amber)' : 'var(--navy)' }}
+                  style={{ color: role === value ? 'var(--cobalt-bright)' : 'var(--text-muted)' }}
                 />
               </div>
-              <div className="font-semibold text-base mb-1">{title}</div>
+              <div className="font-semibold text-base mb-1 text-white">{title}</div>
               <div
                 className="text-xs leading-relaxed"
-                style={{ color: role === value ? 'rgba(255,255,255,0.65)' : 'var(--text-muted)' }}
+                style={{ color: role === value ? 'var(--text-muted)' : 'var(--text-muted)' }}
               >
                 {desc}
               </div>
@@ -102,8 +102,8 @@ export default function OnboardingPage() {
         <button
           onClick={handleContinue}
           disabled={!role || loading}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
-          style={{ background: 'var(--navy)', color: 'var(--amber)' }}
+          className="gloss-btn w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-base transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          style={{ background: 'var(--cobalt)', color: '#fff' }}
         >
           {loading ? (
             <Loader2 size={18} className="animate-spin" />
