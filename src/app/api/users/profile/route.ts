@@ -1,4 +1,5 @@
 import { auth } from '@/lib/auth'
+import { clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
@@ -10,11 +11,22 @@ export async function PATCH(req: Request) {
     }
 
     const { name, bio, headline, hourlyRate, subjects } = await req.json()
+    const displayName = typeof name === 'string' ? name.trim().replace(/\s+/g, ' ') : ''
+    if (!displayName || displayName.length > 100) {
+      return NextResponse.json({ error: 'Enter a name between 1 and 100 characters.' }, { status: 400 })
+    }
+
+    const [firstName, ...lastNameParts] = displayName.split(' ')
+    const client = await clerkClient()
+    await client.users.updateUser(userId, {
+      firstName,
+      lastName: lastNameParts.join(' '),
+    })
 
     const updatedUser = await prisma.user.update({
       where: { clerkId: userId },
       data: {
-        name,
+        name: displayName,
         bio,
         hourlyRate,
         subjects: Array.isArray(subjects) ? subjects : [],

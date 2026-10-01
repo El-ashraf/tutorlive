@@ -42,6 +42,8 @@ interface CopilotMessage {
   text: string
 }
 
+type MobileClassroomTab = 'board' | 'video' | 'chat' | 'copilot' | 'notes'
+
 export default function LiveSessionRoom({
   roomId,
   booking,
@@ -49,6 +51,7 @@ export default function LiveSessionRoom({
 }: LiveSessionRoomProps) {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<'split' | 'whiteboard' | 'video'>('split')
+  const [mobileTab, setMobileTab] = useState<MobileClassroomTab>('board')
   const [activeTab, setActiveTab] = useState<'chat' | 'copilot' | 'notes'>('chat')
   const [copied, setCopied] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -63,6 +66,8 @@ export default function LiveSessionRoom({
   const [notes, setNotes] = useState('')
 
   const isTutor = currentUser.role === 'TUTOR' || booking?.tutorId === currentUser.id
+  const mobileShowsWorkspace = mobileTab === 'board' || mobileTab === 'video'
+  const mobileShowsPanel = !mobileShowsWorkspace
 
   // Supabase Realtime Setup for Chat & Meeting Control
   useEffect(() => {
@@ -272,35 +277,42 @@ export default function LiveSessionRoom({
         </div>
       </header>
 
-      <div className="md:hidden flex shrink-0 items-center gap-1 p-1.5" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
+      <div className="md:hidden grid shrink-0 grid-cols-5 gap-1 p-1" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
         {[
-          { id: 'split', label: 'Split', icon: LayoutTemplate },
-          { id: 'whiteboard', label: 'Board', icon: PenTool },
+          { id: 'board', label: 'Board', icon: PenTool },
           { id: 'video', label: 'Video', icon: Video },
+          { id: 'chat', label: 'Chat', icon: MessageSquare },
+          { id: 'copilot', label: 'AI', icon: Sparkles },
+          { id: 'notes', label: 'Notes', icon: PenTool },
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
-            onClick={() => setViewMode(id as any)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold`}
-            style={viewMode === id ? { background: 'var(--cobalt)', color: '#fff' } : { color: 'var(--text-muted)' }}
+            onClick={() => {
+              const tab = id as MobileClassroomTab
+              setMobileTab(tab)
+              if (tab === 'chat' || tab === 'copilot' || tab === 'notes') setActiveTab(tab)
+            }}
+            className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-semibold"
+            style={mobileTab === id ? { background: 'var(--cobalt)', color: '#fff' } : { color: 'var(--text-muted)' }}
           >
-            <Icon size={15} /> {label}
+            <Icon size={15} />
+            <span>{label}</span>
           </button>
         ))}
       </div>
 
       {/* ── Scrollable / Expandable Interactive Layout ── */}
-      <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden p-2 sm:p-4 gap-3 sm:gap-4" style={{ background: 'var(--navy)' }}>
+      <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-hidden p-1.5 sm:p-4 gap-2 sm:gap-4" style={{ background: 'var(--navy)' }}>
         {/* Main Classroom Workspace Container */}
-        <div className="min-w-0 flex-1 flex flex-col md:flex-row gap-3 sm:gap-4 pr-1">
+        <div className={`min-w-0 min-h-0 flex-1 flex flex-col md:flex-row gap-2 sm:gap-4 pr-0.5 ${mobileShowsWorkspace ? 'flex' : 'hidden md:flex'}`}>
           {/* Whiteboard Container (Always mounted in DOM) */}
           <div
-            className={`h-[52vh] min-h-[320px] shrink-0 transition-all duration-200 lg:h-full lg:min-h-0 ${
+            className={`min-w-0 min-h-0 h-full shrink-0 transition-all duration-200 ${mobileTab === 'board' ? 'flex' : 'hidden'} ${
               viewMode === 'video'
-                ? 'hidden'
+                ? 'md:hidden'
                 : viewMode === 'whiteboard'
-                ? 'w-full flex-1'
-                : 'w-full flex-1 md:w-3/5'
+                ? 'md:flex md:w-full md:flex-1'
+                : 'md:flex md:w-3/5'
             }`}
           >
             <RealtimeWhiteboard
@@ -313,12 +325,12 @@ export default function LiveSessionRoom({
 
           {/* Keep the classroom connection mounted when switching views. */}
           <div
-            className={`h-[42vh] min-h-[280px] shrink-0 transition-all duration-200 lg:h-full lg:min-h-0 ${
+            className={`min-w-0 min-h-0 h-full shrink-0 transition-all duration-200 ${mobileTab === 'video' ? 'flex' : 'hidden'} ${
               viewMode === 'whiteboard'
-                ? 'hidden'
+                ? 'md:hidden'
                 : viewMode === 'video'
-                ? 'w-full flex-1'
-                : 'w-full flex-1 md:w-2/5'
+                ? 'md:flex md:w-full md:flex-1'
+                : 'md:flex md:w-2/5'
             }`}
           >
             <LiveKitVideoCall
@@ -330,8 +342,8 @@ export default function LiveSessionRoom({
         </div>
 
         {/* ── Right Side Panel (Chat, Copilot, Notes) ── */}
-        <div className="w-full h-[42vh] min-h-[280px] flex flex-col rounded-2xl overflow-hidden shrink-0 lg:w-80 lg:h-full lg:min-h-0" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
-          <div className="flex items-center" style={{ background: 'var(--navy)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
+        <div className={`w-full h-full min-h-0 flex-col rounded-2xl overflow-hidden shrink-0 ${mobileShowsPanel ? 'flex' : 'hidden'} md:flex md:h-[42vh] md:min-h-[280px] lg:w-80 lg:h-full lg:min-h-0`} style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
+          <div className="hidden items-center md:flex" style={{ background: 'var(--navy)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
             {[
               { id: 'chat', label: 'Chat', icon: MessageSquare },
               { id: 'copilot', label: 'AI Copilot', icon: Sparkles },
@@ -352,7 +364,7 @@ export default function LiveSessionRoom({
             ))}
           </div>
 
-          <div className="flex-1 flex flex-col p-4 overflow-hidden">
+          <div className="min-h-0 flex-1 flex flex-col p-2 sm:p-4 overflow-hidden">
             {activeTab === 'chat' && (
               <div className="flex-1 flex flex-col justify-between h-full">
                 <div className="flex-1 overflow-y-auto space-y-3 pr-1">

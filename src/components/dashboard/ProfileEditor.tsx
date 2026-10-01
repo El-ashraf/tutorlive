@@ -54,7 +54,7 @@ export default function ProfileEditor({ user }: { user: any }) {
   return (
     <form
       onSubmit={handleSave}
-      className="glass-card rounded-2xl p-6 max-w-2xl space-y-5"
+      className="glass-card w-full min-w-0 max-w-2xl space-y-5 rounded-2xl p-4 sm:p-6"
     >
       <div>
         <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
@@ -130,11 +130,11 @@ export default function ProfileEditor({ user }: { user: any }) {
         />
       </div>
 
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-3 pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="gloss-btn px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm"
+          className="gloss-btn flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm transition-all sm:w-auto sm:px-6"
           style={{ background: 'var(--cobalt)', color: '#fff' }}
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : 'Save Profile Changes'}

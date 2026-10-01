@@ -43,17 +43,17 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
 
   return (
     <div
-      className="card-glow rounded-3xl p-6 text-white relative overflow-hidden"
+      className="card-glow relative min-w-0 overflow-hidden rounded-3xl p-4 text-white sm:p-6"
       style={{ background: 'linear-gradient(135deg, var(--navy-light) 0%, var(--navy-card) 100%)', border: '1px solid rgba(37,99,235,0.2)' }}
     >
-      <div className="relative z-10 grid md:grid-cols-2 gap-6 items-center">
-        <div className="space-y-4">
+      <div className="relative z-10 grid min-w-0 items-center gap-5 md:grid-cols-2 sm:gap-6">
+        <div className="min-w-0 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: 'rgba(37,99,235,0.15)', color: 'var(--cobalt-bright)', border: '1px solid rgba(37,99,235,0.3)' }}>
             <Sparkles size={14} /> Live Video + Whiteboard Studio
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Instant Class Room</h2>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+            <h2 className="text-xl font-bold text-white sm:text-2xl">Instant Class Room</h2>
+            <p className="mt-1 break-words text-xs" style={{ color: 'var(--text-muted)' }}>
               Start an instant live session without scheduling. Generate a room link and share it directly with your student.
             </p>
           </div>
@@ -61,18 +61,18 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
           {!createdRoomId ? (
             <button
               onClick={handleLaunchInstantRoom}
-              className="gloss-btn inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-transform hover:scale-105 shadow-md"
+              className="gloss-btn inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold shadow-md transition-transform hover:scale-[1.02] sm:w-auto sm:px-6"
               style={{ background: 'var(--cobalt)', color: '#fff' }}
             >
               <Video size={18} /> <PenTool size={18} /> Launch Instant Class
             </button>
           ) : (
-            <div className="space-y-3 p-4 rounded-2xl" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Room Ready: <span className="font-mono font-bold" style={{ color: 'var(--cobalt-bright)' }}>{createdRoomId}</span></div>
-              <div className="flex gap-2">
+              <div className="min-w-0 space-y-3 rounded-2xl p-3 sm:p-4" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
+              <div className="break-all text-xs" style={{ color: 'var(--text-muted)' }}>Room Ready: <span className="font-mono font-bold" style={{ color: 'var(--cobalt-bright)' }}>{createdRoomId}</span></div>
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   onClick={copyLink}
-                  className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5"
+                  className="flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-white"
                   style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
                 >
                   {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
@@ -80,7 +80,7 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
                 </button>
                 <button
                   onClick={handleEnterRoom}
-                  className="gloss-btn py-2 px-5 rounded-xl text-xs font-bold flex items-center gap-1"
+                  className="gloss-btn flex min-h-10 items-center justify-center gap-1 rounded-xl px-4 py-2 text-xs font-bold sm:px-5"
                   style={{ background: 'var(--cobalt)', color: '#fff' }}
                 >
                   Enter Room <ArrowRight size={14} />
@@ -90,7 +90,7 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
           )}
         </div>
 
-        <div className="p-5 rounded-2xl space-y-3" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
+        <div className="min-w-0 space-y-3 rounded-2xl p-4 sm:p-5" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
           <h3 className="font-bold text-sm text-white flex items-center gap-2">
             <LogIn size={16} style={{ color: 'var(--cobalt-bright)' }} /> Join Class by Room ID or Link
           </h3>
@@ -98,19 +98,19 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
             Got a class link or room ID from your tutor or group? Paste it here to join immediately.
           </p>
 
-          <form onSubmit={handleJoinByInput} className="flex gap-2">
+          <form onSubmit={handleJoinByInput} className="flex min-w-0 flex-col gap-2 sm:flex-row">
             <input
               type="text"
               placeholder="Paste room ID or full link..."
               value={joinInput}
               onChange={(e) => setJoinInput(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 rounded-xl text-xs text-white focus:outline-none"
+              className="min-w-0 w-full flex-1 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
               style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
             />
             <button
               type="submit"
               disabled={!joinInput.trim()}
-              className="gloss-btn px-4 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40"
+              className="gloss-btn min-h-10 w-full shrink-0 rounded-xl px-4 py-2.5 text-xs font-bold disabled:opacity-40 sm:w-auto"
               style={{ background: 'var(--cobalt)', color: '#fff' }}
             >
               Join Room

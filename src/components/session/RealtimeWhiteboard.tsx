@@ -470,8 +470,8 @@ export default function RealtimeWhiteboard({
 
   return (
     <div className="relative w-full h-full flex flex-col rounded-2xl overflow-hidden" style={{ background: '#fbf8f1', border: '1px solid rgba(37,99,235,0.15)' }}>
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 z-10 shadow-sm" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
-        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'var(--navy)' }}>
+      <div className="z-10 flex flex-col items-stretch gap-1.5 px-2 py-1.5 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:px-4 sm:py-3" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
+        <div className="flex w-full items-center gap-1 overflow-x-auto rounded-xl p-1 sm:w-auto" style={{ background: 'var(--navy)' }}>
           {[
             { id: 'pen', icon: Pencil, label: 'Pen' },
             { id: 'highlighter', icon: Highlighter, label: 'Highlighter' },
@@ -484,7 +484,7 @@ export default function RealtimeWhiteboard({
               key={id}
               onClick={() => setTool(id as any)}
               title={label}
-              className={`min-h-10 min-w-10 flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
+              className={`min-h-8 min-w-8 flex items-center justify-center rounded-lg text-xs font-medium transition-all sm:min-h-10 sm:min-w-10 ${
                 tool === id
                   ? 'shadow-sm'
                   : 'hover:bg-white/10'
@@ -496,20 +496,20 @@ export default function RealtimeWhiteboard({
           ))}
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:flex-1 sm:justify-center">
+          <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
           {colors.map((c) => (
             <button
               key={c}
               onClick={() => setColor(c)}
-              className={`w-8 h-8 sm:w-6 sm:h-6 shrink-0 rounded-full border transition-transform ${
+              className={`h-6 w-6 shrink-0 rounded-full border transition-transform sm:h-6 sm:w-6 ${
                 color === c ? 'scale-125 ring-2' : 'hover:scale-110'
               }`}
               style={{ background: c, borderColor: 'rgba(255,255,255,0.1)', ...(color === c ? { boxShadow: '0 0 0 2px var(--cobalt-bright)' } : {}) }}
             />
           ))}
-        </div>
-
-        <div className="flex items-center gap-2">
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
           <span className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>Size</span>
           <input
             type="range"
@@ -517,18 +517,19 @@ export default function RealtimeWhiteboard({
             max="24"
             value={size}
             onChange={(e) => setSize(Number(e.target.value))}
-            className="w-20 cursor-pointer"
+            className="w-16 cursor-pointer sm:w-20"
             style={{ accentColor: 'var(--cobalt-bright)' }}
           />
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 pl-2" style={{ borderLeft: '1px solid rgba(37,99,235,0.15)' }}>
+        <div className="flex w-full items-center justify-between gap-1 border-l-0 pl-0 sm:w-auto sm:justify-center sm:border-l sm:pl-2" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
           <button
             type="button"
             onClick={() => handleSetPage(currentPage - 1)}
             disabled={!isTutor || currentPage === 0}
             aria-label="Previous whiteboard page"
-            className="min-h-9 min-w-9 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-9 sm:min-w-9"
             style={{ color: 'var(--text-muted)' }}
           >
             <ChevronLeft size={16} />
@@ -541,7 +542,7 @@ export default function RealtimeWhiteboard({
             onClick={() => handleSetPage(currentPage + 1)}
             disabled={!isTutor || currentPage >= pageCount - 1}
             aria-label="Next whiteboard page"
-            className="min-h-9 min-w-9 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-9 sm:min-w-9"
             style={{ color: 'var(--text-muted)' }}
           >
             <ChevronRight size={16} />
@@ -551,7 +552,7 @@ export default function RealtimeWhiteboard({
               type="button"
               onClick={handleAddPage}
               disabled={pageCount >= 100}
-              className="flex min-h-9 items-center gap-1 rounded-lg px-2 text-[10px] font-semibold text-white disabled:opacity-40"
+              className="flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-semibold text-white disabled:opacity-40 sm:min-h-9"
               style={{ background: 'var(--cobalt)' }}
             >
               <Plus size={14} /> New page
@@ -561,12 +562,12 @@ export default function RealtimeWhiteboard({
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 pl-3" style={{ borderLeft: '1px solid rgba(37,99,235,0.15)' }}>
+        <div className="flex w-full items-center justify-around gap-1.5 border-l-0 pl-0 sm:w-auto sm:justify-start sm:border-l sm:pl-3" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
           <button
             onClick={handleUndo}
             disabled={strokes.length === 0}
             title="Undo"
-            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <RotateCcw size={16} />
@@ -575,7 +576,7 @@ export default function RealtimeWhiteboard({
             onClick={handleRedo}
             disabled={redoStack.length === 0}
             title="Redo"
-            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <RotateCw size={16} />
@@ -583,7 +584,7 @@ export default function RealtimeWhiteboard({
           <button
             onClick={handleClear}
             title="Clear Board"
-            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg hover:bg-red-500/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--rose-bright)' }}
           >
             <Trash2 size={16} />
@@ -591,7 +592,7 @@ export default function RealtimeWhiteboard({
           <button
             onClick={handleDownload}
             title="Save Image"
-            className="min-h-10 min-w-10 flex items-center justify-center rounded-lg hover:bg-white/10"
+            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg hover:bg-white/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <Download size={16} />
