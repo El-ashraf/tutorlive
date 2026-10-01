@@ -24,9 +24,6 @@ export default async function SettingsPage() {
             variables: {
               colorPrimary: '#3B82F6',
               colorBackground: '#111827',
-              colorInputBackground: '#0A0E14',
-              colorInputText: '#F8FAFC',
-              borderRadius: '0.75rem',
             },
             elements: {
               rootBox: 'w-full min-w-0',
