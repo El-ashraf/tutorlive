@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import ProfileEditor from '@/components/dashboard/ProfileEditor'
@@ -17,7 +17,7 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--ice)' }}>
           My Profile
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>

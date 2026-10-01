@@ -54,17 +54,18 @@ export default function ProfileEditor({ user }: { user: any }) {
   return (
     <form
       onSubmit={handleSave}
-      className="rounded-2xl border p-6 max-w-2xl space-y-5 bg-white border-[#e5ded3]"
+      className="glass-card rounded-2xl p-6 max-w-2xl space-y-5"
     >
       <div>
-        <label className="block text-xs font-bold mb-1 text-[#243149]">
+        <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
           Full Name
         </label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3.5 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+          className="w-full px-3.5 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+          style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
           required
         />
       </div>
@@ -72,7 +73,7 @@ export default function ProfileEditor({ user }: { user: any }) {
       {isTutor && (
         <>
           <div>
-            <label className="block text-xs font-bold mb-1 text-[#243149]">
+            <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
               Headline / Short Title
             </label>
             <input
@@ -80,12 +81,13 @@ export default function ProfileEditor({ user }: { user: any }) {
               placeholder="e.g. Senior Calculus & Physics Tutor with 5+ yrs exp"
               value={headline}
               onChange={(e) => setHeadline(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+              className="w-full px-3.5 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+              style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold mb-1 text-[#243149]">
+            <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
               Hourly Rate ($ USD)
             </label>
             <input
@@ -93,12 +95,13 @@ export default function ProfileEditor({ user }: { user: any }) {
               placeholder="35"
               value={hourlyRate}
               onChange={(e) => setHourlyRate(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+              className="w-full px-3.5 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+              style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold mb-1 text-[#243149]">
+            <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
               Subjects (comma separated)
             </label>
             <input
@@ -106,14 +109,15 @@ export default function ProfileEditor({ user }: { user: any }) {
               placeholder="Mathematics, Physics, Calculus, Algebra"
               value={subjectsText}
               onChange={(e) => setSubjectsText(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+              className="w-full px-3.5 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+              style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
             />
           </div>
         </>
       )}
 
       <div>
-        <label className="block text-xs font-bold mb-1 text-[#243149]">
+        <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>
           Biography
         </label>
         <textarea
@@ -121,7 +125,8 @@ export default function ProfileEditor({ user }: { user: any }) {
           placeholder="Tell students or tutors about your background and teaching style..."
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          className="w-full px-3.5 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63] leading-relaxed"
+          className="w-full px-3.5 py-2.5 rounded-xl text-sm text-white focus:outline-none leading-relaxed"
+          style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
         />
       </div>
 
@@ -129,13 +134,14 @@ export default function ProfileEditor({ user }: { user: any }) {
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm bg-[#243149] text-[#f29a63]"
+          className="gloss-btn px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-sm"
+          style={{ background: 'var(--cobalt)', color: '#fff' }}
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : 'Save Profile Changes'}
         </button>
 
         {saved && (
-          <span className="flex items-center gap-1 text-xs font-bold text-emerald-600">
+          <span className="flex items-center gap-1 text-xs font-bold text-emerald-400">
             <Check size={16} /> Profile updated!
           </span>
         )}

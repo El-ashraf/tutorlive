@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { formatDateTime } from '@/lib/utils'
@@ -31,7 +31,7 @@ export default async function SessionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--ice)' }}>
           {isTutor ? 'Teaching Sessions' : 'My Sessions'}
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -40,13 +40,12 @@ export default async function SessionsPage() {
       </div>
 
       <div
-        className="rounded-2xl border p-4 sm:p-6"
-        style={{ background: '#fff', borderColor: 'var(--border-warm)' }}
+        className="glass-card rounded-2xl p-4 sm:p-6"
       >
         {bookings.length === 0 ? (
           <div className="text-center py-16">
-            <Calendar size={48} className="mx-auto mb-3" style={{ color: 'var(--border-warm)' }} />
-            <p className="font-semibold text-lg" style={{ color: 'var(--navy)' }}>
+            <Calendar size={48} className="mx-auto mb-3" style={{ color: 'var(--text-muted)' }} />
+            <p className="font-semibold text-lg" style={{ color: 'var(--ice)' }}>
               No sessions scheduled
             </p>
             <p className="text-xs mt-1 mb-4" style={{ color: 'var(--text-muted)' }}>
@@ -57,15 +56,15 @@ export default async function SessionsPage() {
             {!isTutor && (
               <Link
                 href="/tutors"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs"
-                style={{ background: 'var(--navy)', color: 'var(--amber)' }}
+                className="gloss-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs"
+                style={{ background: 'var(--cobalt)', color: '#fff' }}
               >
                 Find a Tutor <ArrowRight size={14} />
               </Link>
             )}
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: 'var(--border-warm)' }}>
+          <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
             {bookings.map((b) => {
               const other = isTutor ? (b as any).student : (b as any).tutor
               return (
@@ -73,19 +72,19 @@ export default async function SessionsPage() {
                   <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm"
-                      style={{ background: 'var(--navy)', color: 'var(--amber)' }}
+                      style={{ background: 'var(--navy-light)', color: 'var(--cobalt-bright)' }}
                     >
                       {other.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-base" style={{ color: 'var(--navy)' }}>
+                      <div className="font-bold text-base" style={{ color: 'var(--ice)' }}>
                         {b.title || `${b.subject} Session`}
                       </div>
                       <div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
                         With {other.name} · {formatDateTime(b.scheduledAt)} ({b.durationMin} min)
                       </div>
                       {b.notes && (
-                        <div className="text-xs italic mt-1" style={{ color: 'var(--amber)' }}>
+                        <div className="text-xs italic mt-1" style={{ color: 'var(--cobalt-bright)' }}>
                           Note: "{b.notes}"
                         </div>
                       )}
@@ -98,16 +97,16 @@ export default async function SessionsPage() {
                       style={{
                         background:
                           b.status === 'ACCEPTED'
-                            ? 'rgba(16,185,129,0.12)'
+                            ? 'rgba(16,185,129,0.15)'
                             : b.status === 'PENDING'
-                            ? 'rgba(245,158,11,0.12)'
-                            : 'rgba(239,68,68,0.12)',
+                            ? 'rgba(37,99,235,0.15)'
+                            : 'rgba(244,63,94,0.15)',
                         color:
                           b.status === 'ACCEPTED'
-                            ? '#059669'
+                            ? '#34d399'
                             : b.status === 'PENDING'
-                            ? '#d97706'
-                            : '#dc2626',
+                            ? 'var(--cobalt-bright)'
+                            : 'var(--rose-bright)',
                       }}
                     >
                       {b.status}
@@ -116,8 +115,8 @@ export default async function SessionsPage() {
                     {b.status === 'ACCEPTED' && (
                       <Link
                         href={`/session/${b.roomId}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-transform hover:scale-105"
-                        style={{ background: 'var(--navy)', color: 'var(--amber)' }}
+                        className="gloss-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-transform hover:scale-105"
+                        style={{ background: 'var(--cobalt)', color: '#fff' }}
                       >
                         <Video size={14} /> Join Room
                       </Link>

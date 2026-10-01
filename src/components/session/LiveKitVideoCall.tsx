@@ -63,47 +63,47 @@ function ClassroomTracks({ isTutor }: { isTutor: boolean }) {
   }, [pageStudentIds, participants, teacherId])
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2 bg-[#182030] p-2">
-      <div className="min-h-0 flex-[3] overflow-hidden rounded-xl border border-[#344158] bg-[#243149]">
+    <div className="flex min-h-0 flex-1 flex-col gap-2 p-2" style={{ background: 'var(--navy)' }}>
+      <div className="min-h-0 flex-[3] overflow-hidden rounded-xl" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
         {featuredTrack ? (
           <ParticipantTile trackRef={featuredTrack} className="h-full w-full" />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-[#aeb9c7]">
+          <div className="flex h-full items-center justify-center text-sm" style={{ color: 'var(--text-muted)' }}>
             Waiting for the teacher to join…
           </div>
         )}
       </div>
-          <div className="flex min-h-0 flex-1 gap-2 overflow-x-auto">
+      <div className="flex min-h-0 flex-1 gap-2 overflow-x-auto">
         {studentTracks.map((track) => (
-          <div key={`${track.participant.identity}-${track.source}`} className="aspect-video h-full min-w-32 overflow-hidden rounded-xl border border-[#344158] bg-[#243149]">
+          <div key={`${track.participant.identity}-${track.source}`} className="aspect-video h-full min-w-32 overflow-hidden rounded-xl" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}>
             <ParticipantTile trackRef={track} className="h-full w-full" />
           </div>
         ))}
-            {studentTracks.length === 0 && studentParticipants.length === 0 && (
-          <div className="flex flex-1 items-center justify-center text-xs text-[#aeb9c7]">
+        {studentTracks.length === 0 && studentParticipants.length === 0 && (
+          <div className="flex flex-1 items-center justify-center text-xs" style={{ color: 'var(--text-muted)' }}>
             Students can turn on their cameras whenever they want.
           </div>
         )}
       </div>
-          {studentParticipants.length > STUDENTS_PER_PAGE && (
-            <div className="flex shrink-0 items-center justify-center gap-2 text-[10px] text-[#aeb9c7]">
-              <button
-                type="button"
-                onClick={() => setStudentPage((page) => Math.max(0, page - 1))}
-                disabled={studentPage === 0}
-                aria-label="Previous students"
-                className="rounded p-1 disabled:opacity-40"
-              ><ChevronLeft size={16} /></button>
-              <span>Students {studentPage * STUDENTS_PER_PAGE + 1}–{Math.min((studentPage + 1) * STUDENTS_PER_PAGE, studentParticipants.length)} of {studentParticipants.length}</span>
-              <button
-                type="button"
-                onClick={() => setStudentPage((page) => Math.min(pageCount - 1, page + 1))}
-                disabled={studentPage >= pageCount - 1}
-                aria-label="Next students"
-                className="rounded p-1 disabled:opacity-40"
-              ><ChevronRight size={16} /></button>
-            </div>
-          )}
+      {studentParticipants.length > STUDENTS_PER_PAGE && (
+        <div className="flex shrink-0 items-center justify-center gap-2 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+          <button
+            type="button"
+            onClick={() => setStudentPage((page) => Math.max(0, page - 1))}
+            disabled={studentPage === 0}
+            aria-label="Previous students"
+            className="rounded p-1 disabled:opacity-40"
+          ><ChevronLeft size={16} /></button>
+          <span>Students {studentPage * STUDENTS_PER_PAGE + 1}–{Math.min((studentPage + 1) * STUDENTS_PER_PAGE, studentParticipants.length)} of {studentParticipants.length}</span>
+          <button
+            type="button"
+            onClick={() => setStudentPage((page) => Math.min(pageCount - 1, page + 1))}
+            disabled={studentPage >= pageCount - 1}
+            aria-label="Next students"
+            className="rounded p-1 disabled:opacity-40"
+          ><ChevronRight size={16} /></button>
+        </div>
+      )}
     </div>
   )
 }
@@ -140,9 +140,9 @@ export default function LiveKitVideoCall({ roomId, userName, isTutor }: LiveKitV
   }, [roomId])
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[#344158] bg-[#1e273a]" data-lk-theme="default">
+    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }} data-lk-theme="default">
       {error ? (
-        <div role="alert" className="flex flex-1 items-center justify-center p-5 text-center text-sm text-red-200">
+        <div role="alert" className="flex flex-1 items-center justify-center p-5 text-center text-sm text-red-300">
           {error}
         </div>
       ) : token && serverUrl ? (
@@ -162,8 +162,8 @@ export default function LiveKitVideoCall({ roomId, userName, isTutor }: LiveKitV
           className="flex h-full min-h-0 flex-col"
         >
           <ClassroomTracks isTutor={isTutor} />
-          <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-t border-[#344158] bg-[#243149] px-3">
-            <span className="truncate text-[10px] text-[#aeb9c7]">{status} · {userName}</span>
+          <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-3" style={{ background: 'var(--navy-light)', borderTop: '1px solid rgba(37,99,235,0.15)' }}>
+            <span className="truncate text-[10px]" style={{ color: 'var(--text-muted)' }}>{status} · {userName}</span>
             <ControlBar
               variation="minimal"
               controls={{ microphone: true, camera: true, screenShare: true, leave: false }}
@@ -172,7 +172,7 @@ export default function LiveKitVideoCall({ roomId, userName, isTutor }: LiveKitV
           <RoomAudioRenderer />
         </LiveKitRoom>
       ) : (
-        <div className="flex flex-1 items-center justify-center text-sm text-[#aeb9c7]">{status}</div>
+        <div className="flex flex-1 items-center justify-center text-sm" style={{ color: 'var(--text-muted)' }}>{status}</div>
       )}
     </div>
   )

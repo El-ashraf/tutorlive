@@ -63,7 +63,8 @@ export default function BookingModal({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full md:w-auto px-8 py-3.5 rounded-2xl font-bold text-sm transition-transform hover:scale-105 shadow-sm bg-[#243149] text-[#f29a63]"
+        className="gloss-btn w-full md:w-auto px-8 py-3.5 rounded-2xl font-bold text-sm transition-transform hover:scale-105 shadow-sm"
+        style={{ background: 'var(--cobalt)', color: '#fff' }}
       >
         Book 1-on-1 Session
       </button>
@@ -71,31 +72,34 @@ export default function BookingModal({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div
-            className="w-full max-w-lg rounded-3xl p-6 border border-[#e5ded3] bg-white shadow-xl relative"
+            className="w-full max-w-lg rounded-3xl p-6 shadow-xl relative"
+            style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.2)' }}
           >
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full hover:bg-gray-100 text-[#8a8680]"
+              className="absolute top-5 right-5 p-2 rounded-full hover:bg-white/10"
+              style={{ color: 'var(--text-muted)' }}
             >
               <X size={18} />
             </button>
 
-            <h2 className="text-2xl font-bold mb-1 text-[#243149]">
+            <h2 className="text-2xl font-bold mb-1 text-white">
               Book Session with {tutorName}
             </h2>
-            <p className="text-xs mb-6 text-[#8a8680]">
+            <p className="text-xs mb-6" style={{ color: 'var(--text-muted)' }}>
               Select your subject and preferred date/time.
             </p>
 
             <form onSubmit={handleBook} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold mb-1 text-[#243149]">
+                <label className="block text-xs font-semibold mb-1 text-white">
                   Subject
                 </label>
                 <select
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                 >
                   {subjects.length > 0 ? (
                     subjects.map((s) => (
@@ -110,7 +114,7 @@ export default function BookingModal({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1 text-[#243149]">
+                <label className="block text-xs font-semibold mb-1 text-white">
                   Session Topic / Title
                 </label>
                 <input
@@ -118,40 +122,43 @@ export default function BookingModal({
                   placeholder="e.g. Calculus Derivatives Homework Review"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#243149]">
+                  <label className="block text-xs font-semibold mb-1 text-white">
                     Date
                   </label>
                   <input
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                    style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold mb-1 text-[#243149]">
+                  <label className="block text-xs font-semibold mb-1 text-white">
                     Time
                   </label>
                   <input
                     type="time"
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                    style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1 text-[#243149]">
+                <label className="block text-xs font-semibold mb-1 text-white">
                   Notes for Tutor (Optional)
                 </label>
                 <textarea
@@ -159,14 +166,16 @@ export default function BookingModal({
                   placeholder="Any specific questions or materials you'd like to cover?"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-[#e5ded3] text-sm focus:outline-none focus:border-[#f29a63]"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                  style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mt-6 bg-[#243149] text-[#f29a63]"
+                className="gloss-btn w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mt-6"
+                style={{ background: 'var(--cobalt)', color: '#fff' }}
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : 'Confirm Booking Request'}
               </button>

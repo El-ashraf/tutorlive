@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tutorlive
+      POSTGRES_PASSWORD: tutorlive
+      POSTGRES_DB: tutorlive
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tutorlive -d tutorlive"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: on-failure
+
+  web:
+    build:
+      context: .
+      dockerfile: .base44/Dockerfile.dev
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      # Local infra DB (generated, not a user secret)
+      - DATABASE_URL=postgresql://tutorlive:tutorlive@db:5432/tutorlive
+      - DIRECT_URL=postgresql://tutorlive:tutorlive@db:5432/tutorlive
+      # Passed through for Next.js allowedDevOrigins
+      - BASE44_PUBLIC_HOST_SUFFIX
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    command:
+      ["sh", "-ec", "npm ci && npx prisma db push && exec node node_modules/next/dist/bin/next dev -H 0.0.0.0 -p 3000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+    restart: on-failure
+
+volumes:
+  pgdata:
+  node_modules:

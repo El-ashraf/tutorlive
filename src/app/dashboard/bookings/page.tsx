@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import TutorBookingRequests from '@/components/dashboard/TutorBookingRequests'
@@ -22,7 +22,7 @@ export default async function BookingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--navy)' }}>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--ice)' }}>
           Session Requests
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
