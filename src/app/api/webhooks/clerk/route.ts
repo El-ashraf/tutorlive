@@ -1,8 +1,8 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks'
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   let event: Awaited<ReturnType<typeof verifyWebhook>>
   try {
     event = await verifyWebhook(request)
