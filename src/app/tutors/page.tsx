@@ -1,8 +1,13 @@
 import Link from 'next/link'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { Star, Search, ArrowRight } from '@/components/ui/icons'
 
 export const revalidate = 60
+
+type TutorWithProfile = Prisma.UserGetPayload<{
+  include: { tutorProfile: true }
+}>
 
 export default async function TutorsPage({
   searchParams,
@@ -11,7 +16,7 @@ export default async function TutorsPage({
 }) {
   const { subject } = await searchParams
 
-  const tutors = await prisma.user.findMany({
+  const tutors: TutorWithProfile[] = await prisma.user.findMany({
     where: {
       role: 'TUTOR',
       ...(subject
@@ -100,7 +105,7 @@ export default async function TutorsPage({
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tutors.map((tutor) => {
+            {tutors.map((tutor: TutorWithProfile) => {
               const profile = tutor.tutorProfile
               return (
                 <div
@@ -115,7 +120,7 @@ export default async function TutorsPage({
                       >
                         {tutor.name
                           .split(' ')
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join('')
                           .toUpperCase()
                           .slice(0, 2)}
@@ -144,7 +149,7 @@ export default async function TutorsPage({
 
                     <div className="flex flex-wrap gap-1.5 mb-6">
                       {tutor.subjects.length > 0 ? (
-                        tutor.subjects.map((sub) => (
+                        tutor.subjects.map((sub: string) => (
                           <span
                             key={sub}
                             className="text-xs px-2.5 py-1 rounded-md font-medium bg-[#f3ede2] text-[#243149]"
