@@ -259,10 +259,10 @@ export default function OrganizationManager({
           {activeOrg && (
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
-                <div className="glass-card rounded-2xl p-6 flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-2xl font-bold" style={{ color: 'var(--ice)' }}>{activeOrg.name}</h3>
+                <div className="glass-card rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-xl sm:text-2xl font-bold break-words" style={{ color: 'var(--ice)' }}>{activeOrg.name}</h3>
                       <span className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full" style={{ background: 'rgba(37,99,235,0.12)', color: 'var(--cobalt-bright)', border: '1px solid rgba(37,99,235,0.2)' }}>
                         <ShieldCheck size={12} /> Verified Center
                       </span>
@@ -274,24 +274,24 @@ export default function OrganizationManager({
 
                   <button
                     onClick={() => copyOrgCode(activeOrg.code)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold"
+                    className="flex shrink-0 items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold self-start sm:self-auto"
                     style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)', color: 'var(--ice)' }}
                   >
                     {copiedCode === activeOrg.code ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    {copiedCode === activeOrg.code ? 'Code Copied!' : 'Share Center Code'}
+                    {copiedCode === activeOrg.code ? 'Copied!' : 'Share Code'}
                   </button>
                 </div>
 
-                <div className="glass-card rounded-2xl p-6 space-y-4">
+                <div className="glass-card rounded-2xl p-4 sm:p-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                    <h4 className="font-bold text-sm sm:text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
                       <Users size={18} style={{ color: 'var(--cobalt-bright)' }} /> Employed Tutors & Members ({activeOrg.members?.length || 0})
                     </h4>
                   </div>
 
                   <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                     {activeOrg.members?.map((m: any) => (
-                      <div key={m.id} className="py-3 flex items-center justify-between text-xs">
+                      <div key={m.id} className="py-3 flex items-center justify-between gap-2 text-xs">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full font-bold flex items-center justify-center text-xs" style={{ background: 'var(--navy-light)', color: 'var(--cobalt-bright)' }}>
                             {m.user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
@@ -318,8 +318,8 @@ export default function OrganizationManager({
                   </div>
                 </div>
 
-                <div className="glass-card rounded-2xl p-6 space-y-4">
-                  <h4 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
+                <div className="glass-card rounded-2xl p-4 sm:p-6 space-y-4">
+                  <h4 className="font-bold text-sm sm:text-base flex items-center gap-2" style={{ color: 'var(--ice)' }}>
                     <BookOpen size={18} style={{ color: 'var(--cobalt-bright)' }} /> Tutorial Groups ({activeOrg.tutorialGroups?.length || 0})
                   </h4>
 

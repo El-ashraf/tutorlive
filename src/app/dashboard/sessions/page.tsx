@@ -40,7 +40,7 @@ export default async function SessionsPage() {
       </div>
 
       <div
-        className="glass-card rounded-2xl p-4 sm:p-6"
+        className="glass-card rounded-2xl p-4 sm:p-6 overflow-hidden"
       >
         {bookings.length === 0 ? (
           <div className="text-center py-16">

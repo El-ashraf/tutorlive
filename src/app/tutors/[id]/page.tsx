@@ -45,13 +45,13 @@ export default async function TutorProfilePage({
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-10 space-y-5 sm:space-y-8">
         <div
-          className="glass-card rounded-3xl p-5 sm:p-8 flex flex-col md:flex-row items-start justify-between gap-6"
+          className="glass-card rounded-3xl p-4 sm:p-8 flex flex-col md:flex-row items-start justify-between gap-5 sm:gap-6"
         >
-          <div className="flex flex-col sm:flex-row items-start gap-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 w-full md:w-auto">
             <div
-              className="w-24 h-24 rounded-2xl flex items-center justify-center font-bold text-3xl flex-shrink-0"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center font-bold text-2xl sm:text-3xl flex-shrink-0"
               style={{ background: 'var(--navy-light)', color: 'var(--cobalt-bright)' }}
             >
               {tutor.name
@@ -62,7 +62,7 @@ export default async function TutorProfilePage({
                 .slice(0, 2)}
             </div>
             <div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl sm:text-3xl font-bold break-words" style={{ color: 'var(--ice)' }}>
                   {tutor.name}
                 </h1>
@@ -87,7 +87,7 @@ export default async function TutorProfilePage({
           </div>
 
           <div
-            className="w-full md:w-auto p-6 rounded-2xl flex flex-col items-center md:items-end justify-center gap-3"
+            className="w-full md:w-auto p-4 sm:p-6 rounded-2xl flex flex-col items-center md:items-end justify-center gap-3"
             style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.15)' }}
           >
             <div className="text-center md:text-right">
@@ -101,10 +101,10 @@ export default async function TutorProfilePage({
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5 sm:gap-8">
+        <div className="grid md:grid-cols-3 gap-4 sm:gap-8">
           <div className="md:col-span-2 space-y-8">
-            <div className="glass-card rounded-2xl p-6">
-              <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--ice)' }}>
+            <div className="glass-card rounded-2xl p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold mb-4" style={{ color: 'var(--ice)' }}>
                 About {tutor.name.split(' ')[0]}
               </h2>
               <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-muted)' }}>
@@ -112,8 +112,8 @@ export default async function TutorProfilePage({
               </p>
             </div>
 
-            <div className="glass-card rounded-2xl p-6">
-              <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--ice)' }}>
+            <div className="glass-card rounded-2xl p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold mb-4" style={{ color: 'var(--ice)' }}>
                 Student Reviews ({tutor.reviewsReceived.length})
               </h2>
               {tutor.reviewsReceived.length === 0 ? (
@@ -151,7 +151,7 @@ export default async function TutorProfilePage({
           </div>
 
           <div className="space-y-6">
-            <div className="glass-card rounded-2xl p-6">
+            <div className="glass-card rounded-2xl p-4 sm:p-6">
               <h3 className="font-bold text-base mb-3" style={{ color: 'var(--ice)' }}>
                 Subjects Taught
               </h3>

@@ -72,7 +72,7 @@ export default function BookingModal({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div
-            className="w-full max-w-lg rounded-3xl p-6 shadow-xl relative"
+            className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-3xl p-5 sm:p-6 shadow-xl relative"
             style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.2)' }}
           >
             <button
