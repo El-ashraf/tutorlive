@@ -123,7 +123,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
           paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))',
         }}
       >
-        {links.map(({ href, icon: Icon, label }) => {
+        {links.map(({ href, icon: Icon, label, mobileLabel }) => {
           const isActive = pathname === href
           return (
             <Link
