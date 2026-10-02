@@ -49,10 +49,10 @@ export default function TutorBookingRequests({
   }
 
   return (
-    <div className="glass-card rounded-2xl p-6">
+    <div className="glass-card rounded-2xl p-4 sm:p-6">
       <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         {requests.map((req) => (
-          <div key={req.id} className="py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div key={req.id} className="py-4 sm:py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0"

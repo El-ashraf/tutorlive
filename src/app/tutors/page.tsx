@@ -47,7 +47,7 @@ export default async function TutorsPage({
   return (
     <div className="min-h-screen" style={{ background: 'var(--navy)' }}>
       <header
-        className="border-b py-10 sm:py-12 px-4 sm:px-6 text-center hero-glow"
+        className="border-b py-8 sm:py-12 px-4 sm:px-6 text-center hero-glow"
         style={{ background: 'var(--navy)', borderColor: 'rgba(37,99,235,0.15)' }}
       >
         <div className="max-w-4xl mx-auto">
@@ -89,7 +89,7 @@ export default async function TutorsPage({
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         {tutors.length === 0 ? (
           <div className="glass-card text-center py-16 rounded-2xl">
             <Search size={48} className="mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
@@ -101,13 +101,13 @@ export default async function TutorsPage({
             </p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {tutors.map((tutor: TutorWithProfile) => {
               const profile = tutor.tutorProfile
               return (
                 <div
                   key={tutor.id}
-                  className="glass-card rounded-2xl p-6 flex flex-col justify-between transition-all hover:bg-white/8"
+                  className="glass-card rounded-2xl p-4 sm:p-6 flex flex-col justify-between transition-all hover:bg-white/8"
                 >
                   <div>
                     <div className="flex items-start gap-4 mb-4">

@@ -109,7 +109,7 @@ export default async function DashboardPage() {
 
       {/* Upcoming sessions */}
       <div
-        className="glass-card rounded-2xl p-6"
+        className="glass-card rounded-2xl p-4 sm:p-6"
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-semibold text-lg" style={{ color: 'var(--ice)' }}>
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
                 ? (booking as any).student
                 : (booking as any).tutor
               return (
-                <div key={booking.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div key={booking.id} className="py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold"
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
       {/* Quick actions */}
       {!isTutor && (
         <div
-          className="glass-card rounded-2xl p-6"
+          className="glass-card rounded-2xl p-4 sm:p-6"
         >
           <h2 className="font-semibold text-lg mb-4" style={{ color: 'var(--ice)' }}>
             Quick Actions

@@ -17,21 +17,21 @@ import { cn } from '@/lib/utils'
 import type { User as PrismaUser } from '@prisma/client'
 
 const studentLinks = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/sessions', icon: Calendar, label: 'My Sessions' },
-  { href: '/tutors', icon: Users, label: 'Find Tutors' },
-  { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center' },
-  { href: '/dashboard/profile', icon: User, label: 'Profile' },
-  { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', mobileLabel: 'Home' },
+  { href: '/dashboard/sessions', icon: Calendar, label: 'My Sessions', mobileLabel: 'Sessions' },
+  { href: '/tutors', icon: Users, label: 'Find Tutors', mobileLabel: 'Tutors' },
+  { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center', mobileLabel: 'Center' },
+  { href: '/dashboard/profile', icon: User, label: 'Profile', mobileLabel: 'Profile' },
+  { href: '/dashboard/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },
 ]
 
 const tutorLinks = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/sessions', icon: Calendar, label: 'Sessions' },
-  { href: '/dashboard/bookings', icon: BookOpen, label: 'Requests' },
-  { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center' },
-  { href: '/dashboard/profile', icon: User, label: 'My Profile' },
-  { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', mobileLabel: 'Home' },
+  { href: '/dashboard/sessions', icon: Calendar, label: 'Sessions', mobileLabel: 'Sessions' },
+  { href: '/dashboard/bookings', icon: BookOpen, label: 'Requests', mobileLabel: 'Requests' },
+  { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center', mobileLabel: 'Center' },
+  { href: '/dashboard/profile', icon: User, label: 'My Profile', mobileLabel: 'Profile' },
+  { href: '/dashboard/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },
 ]
 
 export default function DashboardNav({ user }: { user: PrismaUser }) {
@@ -134,7 +134,7 @@ export default function DashboardNav({ user }: { user: PrismaUser }) {
               style={{ color: isActive ? 'var(--cobalt-bright)' : 'rgba(255,255,255,0.62)' }}
             >
               <Icon size={18} />
-              <span className="max-w-full truncate">{label}</span>
+              <span className="max-w-full truncate">{mobileLabel}</span>
             </Link>
           )
         })}
