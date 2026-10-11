@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 export const runtime = 'nodejs'
 
-const MAX_MESSAGE_LENGTH = 5000
+const MAX_MESSAGE_LENGTH = 2000
 const MAX_HISTORY_MESSAGES = 12
 
 type HistoryMessage = {
@@ -41,9 +41,35 @@ export async function POST(request: Request) {
 
     const booking = await prisma.booking.findUnique({
       where: { roomId },
-      select: { studentId: true, tutorId: true, subject: true },
+      select: { studentId: true, tutorId: true, subject: true, status: true },
     })
-    if (booking && booking.studentId !== user.id && booking.tutorId !== user.id) {
+    if (booking && (booking.studentId !== user.id && booking.tutorId !== user.id || booking.status !== 'ACCEPTED')) {
+      return NextResponse.json({ error: 'You are not a participant in this classroom.' }, { status: 403 })
+    }
+    const groupSession = booking ? null : await prisma.groupSession.findUnique({
+      where: { roomId },
+      select: {
+        status: true,
+        endedAt: true,
+        group: {
+          select: {
+            tutorId: true,
+            organization: {
+              select: {
+                founderId: true,
+                members: { where: { userId: user.id }, select: { userId: true, role: true } },
+              },
+            },
+          },
+        },
+      },
+    })
+    const groupTutor = Boolean(groupSession && (
+      groupSession.group.tutorId === user.id ||
+      groupSession.group.organization.founderId === user.id ||
+      groupSession.group.organization.members.some((member) => member.role === 'TUTOR')
+    ))
+    if (!booking && (!groupSession || groupSession.status !== 'ACTIVE' || groupSession.endedAt || (!groupTutor && groupSession.group.organization.members.length === 0))) {
       return NextResponse.json({ error: 'You are not a participant in this classroom.' }, { status: 403 })
     }
 
@@ -77,7 +103,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           systemInstruction: {
             parts: [{
-              text: `You are TutorLive's classroom copilot. Help a student understand concepts with clear, age-appropriate explanations. Prefer step-by-step reasoning and examples. Do not claim to see the classroom, whiteboard, or video. The lesson subject is ${booking?.subject || 'not specified'}.`,
+              text: `Help the student understand the question with a clear, direct explanation. Use plain language, and give steps or an example when useful. Avoid generic introductions, repeated conclusions, and motivational filler. Do not claim to see the classroom, whiteboard, or video. The lesson subject is ${booking?.subject || 'not specified'}.`,
             }],
           },
           contents,

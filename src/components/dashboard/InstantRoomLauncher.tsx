@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Video, PenTool, ArrowRight, Copy, Check, Sparkles, LogIn } from 'lucide-react'
+import { Video, PenTool, ArrowRight, Copy, Check, LogIn } from 'lucide-react'
 import { generateRoomId } from '@/lib/utils'
 
-export default function InstantRoomLauncher({ userName }: { userName: string }) {
+export default function InstantRoomLauncher({ isTutor }: { isTutor: boolean }) {
   const router = useRouter()
   const [joinInput, setJoinInput] = useState('')
   const [createdRoomId, setCreatedRoomId] = useState<string | null>(null)
@@ -46,29 +46,33 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
       className="card-glow relative min-w-0 overflow-hidden rounded-3xl p-4 text-white sm:p-6"
       style={{ background: 'linear-gradient(135deg, var(--navy-light) 0%, var(--navy-card) 100%)', border: '1px solid rgba(37,99,235,0.2)' }}
     >
-      <div className="relative z-10 grid min-w-0 items-center gap-5 md:grid-cols-2 sm:gap-6">
+      <div className={`relative z-10 grid min-w-0 items-center gap-5 sm:gap-6 ${isTutor ? '' : 'md:grid-cols-2'}`}>
         <div className="min-w-0 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: 'rgba(37,99,235,0.15)', color: 'var(--cobalt-bright)', border: '1px solid rgba(37,99,235,0.3)' }}>
-            <Sparkles size={14} /> Live Video + Whiteboard Studio
+            <Video size={14} /> Live class
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white sm:text-2xl">Instant Class Room</h2>
+            <h2 className="text-xl font-bold text-white sm:text-2xl">
+              {isTutor ? 'Start a live class' : 'Join a live class'}
+            </h2>
             <p className="mt-1 break-words text-xs" style={{ color: 'var(--text-muted)' }}>
-              Start an instant live session without scheduling. Generate a room link and share it directly with your student.
+              {isTutor
+                ? 'Start a session and share the room link with your students.'
+                : 'Paste the room ID or link from your tutor to join.'}
             </p>
           </div>
 
-          {!createdRoomId ? (
+          {isTutor && (!createdRoomId ? (
             <button
               onClick={handleLaunchInstantRoom}
               className="gloss-btn inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold shadow-md transition-transform hover:scale-[1.02] sm:w-auto sm:px-6"
               style={{ background: 'var(--cobalt)', color: '#fff' }}
             >
-              <Video size={18} /> <PenTool size={18} /> Launch Instant Class
+              <Video size={18} /> <PenTool size={18} /> Start class
             </button>
           ) : (
               <div className="min-w-0 space-y-3 rounded-2xl p-3 sm:p-4" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
-              <div className="break-all text-xs" style={{ color: 'var(--text-muted)' }}>Room Ready: <span className="font-mono font-bold" style={{ color: 'var(--cobalt-bright)' }}>{createdRoomId}</span></div>
+              <div className="break-all text-xs" style={{ color: 'var(--text-muted)' }}>Room ID: <span className="font-mono font-bold" style={{ color: 'var(--cobalt-bright)' }}>{createdRoomId}</span></div>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <button
                   onClick={copyLink}
@@ -76,32 +80,32 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
                   style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
                 >
                   {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                  {copied ? 'Link Copied!' : 'Copy Student Link'}
+                  {copied ? 'Copied' : 'Copy class link'}
                 </button>
                 <button
                   onClick={handleEnterRoom}
                   className="gloss-btn flex min-h-10 items-center justify-center gap-1 rounded-xl px-4 py-2 text-xs font-bold sm:px-5"
                   style={{ background: 'var(--cobalt)', color: '#fff' }}
                 >
-                  Enter Room <ArrowRight size={14} />
+                  Join room <ArrowRight size={14} />
                 </button>
               </div>
             </div>
-          )}
+          ))}
         </div>
 
-        <div className="min-w-0 space-y-3 rounded-2xl p-4 sm:p-5" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
+        {!isTutor && <div className="min-w-0 space-y-3 rounded-2xl p-4 sm:p-5" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
           <h3 className="font-bold text-sm text-white flex items-center gap-2">
             <LogIn size={16} style={{ color: 'var(--cobalt-bright)' }} /> Join Class by Room ID or Link
           </h3>
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            Got a class link or room ID from your tutor or group? Paste it here to join immediately.
+            Paste the room ID or class link your tutor sent you.
           </p>
 
           <form onSubmit={handleJoinByInput} className="flex min-w-0 flex-col gap-2 sm:flex-row">
             <input
               type="text"
-              placeholder="Paste room ID or full link..."
+              placeholder="Room ID or class link"
               value={joinInput}
               onChange={(e) => setJoinInput(e.target.value)}
               className="min-w-0 w-full flex-1 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none"
@@ -116,7 +120,7 @@ export default function InstantRoomLauncher({ userName }: { userName: string }) 
               Join Room
             </button>
           </form>
-        </div>
+        </div>}
       </div>
     </div>
   )

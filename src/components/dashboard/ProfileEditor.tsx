@@ -4,6 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Check } from 'lucide-react'
 
+type DayKey = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
+type TutorAvailability = { timezone: string; days: Partial<Record<DayKey, { enabled: boolean; start: string; end: string }>> }
+const weekDays: Array<{ key: DayKey; label: string }> = [
+  { key: 'monday', label: 'Monday' }, { key: 'tuesday', label: 'Tuesday' }, { key: 'wednesday', label: 'Wednesday' },
+  { key: 'thursday', label: 'Thursday' }, { key: 'friday', label: 'Friday' }, { key: 'saturday', label: 'Saturday' }, { key: 'sunday', label: 'Sunday' },
+]
+
 export default function ProfileEditor({ user }: { user: any }) {
   const router = useRouter()
   const [name, setName] = useState(user.name || '')
@@ -11,6 +18,14 @@ export default function ProfileEditor({ user }: { user: any }) {
   const [headline, setHeadline] = useState(user.tutorProfile?.headline || '')
   const [hourlyRate, setHourlyRate] = useState(user.hourlyRate || '')
   const [subjectsText, setSubjectsText] = useState((user.subjects || []).join(', '))
+  const [university, setUniversity] = useState(user.tutorProfile?.university || '')
+  const [courseCodesText, setCourseCodesText] = useState((user.tutorProfile?.courseCodes || []).join(', '))
+  const [availability, setAvailability] = useState<TutorAvailability>(() => {
+    const stored = user.tutorProfile?.availability
+    const base: TutorAvailability = { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', days: {} }
+    if (stored && typeof stored === 'object' && 'days' in stored) return { ...base, ...(stored as TutorAvailability) }
+    return base
+  })
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -36,6 +51,9 @@ export default function ProfileEditor({ user }: { user: any }) {
           headline,
           hourlyRate: hourlyRate ? Number(hourlyRate) : null,
           subjects,
+          university,
+          courseCodes: courseCodesText.split(',').map((code: string) => code.trim()).filter(Boolean),
+          availability,
         }),
       })
 
@@ -113,6 +131,32 @@ export default function ProfileEditor({ user }: { user: any }) {
               style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }}
             />
           </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>University</label>
+            <input type="text" maxLength={160} placeholder="e.g. University of Lagos" value={university} onChange={(e) => setUniversity(e.target.value)} className="w-full rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }} />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1" style={{ color: 'var(--ice)' }}>University course codes</label>
+            <input type="text" maxLength={1000} placeholder="e.g. CSC 201, MTH 204" value={courseCodesText} onChange={(e) => setCourseCodesText(e.target.value)} className="w-full rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }} />
+          </div>
+
+          <fieldset className="space-y-3">
+            <legend className="text-xs font-bold" style={{ color: 'var(--ice)' }}>Weekly availability</legend>
+            <label className="block text-xs text-white/60">Timezone
+              <input value={availability.timezone} onChange={(e) => setAvailability((current) => ({ ...current, timezone: e.target.value }))} placeholder="Africa/Lagos" className="mt-1 w-full rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none" style={{ background: 'var(--navy-light)', border: '1px solid rgba(37,99,235,0.15)' }} />
+            </label>
+            <div className="space-y-2">{weekDays.map(({ key, label }) => {
+              const day = availability.days[key] || { enabled: false, start: '09:00', end: '17:00' }
+              return <div key={key} className="grid grid-cols-[1fr_1fr_1fr] items-center gap-2 rounded-xl border border-white/5 p-2">
+                <label className="flex items-center gap-2 text-xs text-white/80"><input type="checkbox" checked={day.enabled} onChange={(e) => setAvailability((current) => ({ ...current, days: { ...current.days, [key]: { ...day, enabled: e.target.checked } } }))} className="accent-blue-500" />{label}</label>
+                <input aria-label={`${label} start time`} type="time" value={day.start} onChange={(e) => setAvailability((current) => ({ ...current, days: { ...current.days, [key]: { ...day, start: e.target.value } } }))} className="min-w-0 rounded-lg bg-slate-950 px-2 py-2 text-xs text-white" />
+                <input aria-label={`${label} end time`} type="time" value={day.end} onChange={(e) => setAvailability((current) => ({ ...current, days: { ...current.days, [key]: { ...day, end: e.target.value } } }))} className="min-w-0 rounded-lg bg-slate-950 px-2 py-2 text-xs text-white" />
+              </div>
+            })}</div>
+            <p className="text-[11px] text-white/40">This weekly schedule is shown to students and checked when they request a session.</p>
+          </fieldset>
         </>
       )}
 

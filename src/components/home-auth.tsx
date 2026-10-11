@@ -13,7 +13,7 @@ export default function HomeAuth({ signedIn }: { signedIn: boolean }) {
           className="gloss-btn text-sm font-semibold px-4 py-2 rounded-xl transition-all text-white hover:scale-105"
           style={{ background: 'var(--rose-bright)' }}
         >
-          Get started
+          Create account
         </Link>
       </div>
     )
@@ -47,7 +47,7 @@ export default function HomeAuth({ signedIn }: { signedIn: boolean }) {
               className="gloss-btn text-sm font-semibold px-4 py-2 rounded-lg transition-all text-white hover:scale-105"
               style={{ background: 'var(--rose-bright)' }}
             >
-              Get started
+              Create account
             </button>
           </SignUpButton>
         </>

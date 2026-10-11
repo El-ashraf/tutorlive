@@ -16,12 +16,16 @@ import {
   Check,
   Send,
   PhoneOff,
+  Code2,
+  Download,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import CollaborativeCodeEditor from './CollaborativeCodeEditor'
 
 interface LiveSessionRoomProps {
   roomId: string
   booking: any
+  isGroupSession?: boolean
   currentUser: {
     id: string
     name: string
@@ -42,17 +46,19 @@ interface CopilotMessage {
   text: string
 }
 
-type MobileClassroomTab = 'board' | 'video' | 'chat' | 'copilot' | 'notes'
+type MobileClassroomTab = 'board' | 'video' | 'chat' | 'copilot' | 'notes' | 'code'
+type PanelTab = 'chat' | 'copilot' | 'notes' | 'code'
 
 export default function LiveSessionRoom({
   roomId,
   booking,
+  isGroupSession = false,
   currentUser,
 }: LiveSessionRoomProps) {
   const router = useRouter()
-  const [viewMode, setViewMode] = useState<'split' | 'whiteboard' | 'video'>('split')
+  const [viewMode, setViewMode] = useState<'split' | 'whiteboard' | 'video' | 'code'>('split')
   const [mobileTab, setMobileTab] = useState<MobileClassroomTab>('board')
-  const [activeTab, setActiveTab] = useState<'chat' | 'copilot' | 'notes'>('chat')
+  const [activeTab, setActiveTab] = useState<PanelTab>('chat')
   const [copied, setCopied] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputMessage, setInputMessage] = useState('')
@@ -64,10 +70,30 @@ export default function LiveSessionRoom({
   const [copilotLoading, setCopilotLoading] = useState(false)
   const [copilotError, setCopilotError] = useState('')
   const [notes, setNotes] = useState('')
+  const [notesReady, setNotesReady] = useState(false)
 
   const isTutor = currentUser.role === 'TUTOR' || booking?.tutorId === currentUser.id
   const mobileShowsWorkspace = mobileTab === 'board' || mobileTab === 'video'
   const mobileShowsPanel = !mobileShowsWorkspace
+
+  useEffect(() => {
+    try { setNotes(localStorage.getItem(`tutorlive:session-notes:${roomId}`) || '') }
+    catch { setNotes('') }
+    setNotesReady(true)
+  }, [roomId])
+
+  useEffect(() => {
+    if (!notesReady) return
+    try { localStorage.setItem(`tutorlive:session-notes:${roomId}`, notes) }
+    catch { setChatError('Notes could not be saved in this browser.') }
+  }, [notes, notesReady, roomId])
+
+  function exportNotes() {
+    const file = new Blob([`# Session notes\n\nRoom: ${roomId}\n\n${notes}`], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(file)
+    const link = document.createElement('a')
+    link.href = url; link.download = `tutorlive-notes-${roomId}.md`; link.click(); URL.revokeObjectURL(url)
+  }
 
   // Supabase Realtime Setup for Chat & Meeting Control
   useEffect(() => {
@@ -166,11 +192,15 @@ export default function LiveSessionRoom({
 
     try {
       if (booking?.id) {
-        await fetch(`/api/bookings/${booking.id}`, {
+        const response = await fetch(`/api/bookings/${booking.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'COMPLETED' }),
         })
+        if (!response.ok) throw new Error('Could not complete the scheduled session.')
+      } else if (isGroupSession) {
+        const response = await fetch(`/api/group-sessions/${roomId}`, { method: 'PATCH' })
+        if (!response.ok) throw new Error('Could not end the group class.')
       }
 
       const channel = chatChannelRef.current
@@ -226,6 +256,7 @@ export default function LiveSessionRoom({
             { id: 'split', label: 'Split View', icon: LayoutTemplate },
             { id: 'whiteboard', label: 'Whiteboard Focus', icon: PenTool },
             { id: 'video', label: 'Video Focus', icon: Video },
+            { id: 'code', label: 'Code IDE', icon: Code2 },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -277,20 +308,21 @@ export default function LiveSessionRoom({
         </div>
       </header>
 
-      <div className="md:hidden grid shrink-0 grid-cols-5 gap-1 p-1" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
+      <div className="md:hidden grid shrink-0 grid-cols-6 gap-1 p-1" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
         {[
           { id: 'board', label: 'Board', icon: PenTool },
           { id: 'video', label: 'Video', icon: Video },
           { id: 'chat', label: 'Chat', icon: MessageSquare },
           { id: 'copilot', label: 'AI', icon: Sparkles },
           { id: 'notes', label: 'Notes', icon: PenTool },
+          { id: 'code', label: 'Code', icon: Code2 },
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => {
               const tab = id as MobileClassroomTab
               setMobileTab(tab)
-              if (tab === 'chat' || tab === 'copilot' || tab === 'notes') setActiveTab(tab)
+              if (tab === 'chat' || tab === 'copilot' || tab === 'notes' || tab === 'code') setActiveTab(tab)
             }}
             className="flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-semibold"
             style={mobileTab === id ? { background: 'var(--cobalt)', color: '#fff' } : { color: 'var(--text-muted)' }}
@@ -305,10 +337,21 @@ export default function LiveSessionRoom({
       <div className="min-h-0 flex-1 flex flex-col lg:flex-row overflow-hidden p-1.5 sm:p-4 gap-2 sm:gap-4" style={{ background: 'var(--navy)' }}>
         {/* Main Classroom Workspace Container */}
         <div className={`min-w-0 min-h-0 flex-1 flex flex-col md:flex-row gap-2 sm:gap-4 pr-0.5 ${mobileShowsWorkspace ? 'flex' : 'hidden md:flex'}`}>
+          {/* Collaborative Code Editor (Mounted in Main Workspace when viewMode === 'code') */}
+          {viewMode === 'code' && (
+            <div className="min-w-0 min-h-0 h-full w-full flex-1 flex rounded-2xl overflow-hidden">
+              <CollaborativeCodeEditor
+                roomId={roomId}
+                userId={currentUser.id}
+                userName={currentUser.name}
+              />
+            </div>
+          )}
+
           {/* Whiteboard Container (Always mounted in DOM) */}
           <div
             className={`min-w-0 min-h-0 h-full shrink-0 transition-all duration-200 ${mobileTab === 'board' ? 'flex' : 'hidden'} ${
-              viewMode === 'video'
+              viewMode === 'video' || viewMode === 'code'
                 ? 'md:hidden'
                 : viewMode === 'whiteboard'
                 ? 'md:flex md:w-full md:flex-1'
@@ -326,7 +369,7 @@ export default function LiveSessionRoom({
           {/* Keep the classroom connection mounted when switching views. */}
           <div
             className={`min-w-0 min-h-0 h-full shrink-0 transition-all duration-200 ${mobileTab === 'video' ? 'flex' : 'hidden'} ${
-              viewMode === 'whiteboard'
+              viewMode === 'whiteboard' || viewMode === 'code'
                 ? 'md:hidden'
                 : viewMode === 'video'
                 ? 'md:flex md:w-full md:flex-1'
@@ -348,10 +391,11 @@ export default function LiveSessionRoom({
               { id: 'chat', label: 'Chat', icon: MessageSquare },
               { id: 'copilot', label: 'AI Copilot', icon: Sparkles },
               { id: 'notes', label: 'Notes', icon: PenTool },
+              { id: 'code', label: 'Code', icon: Code2 },
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
-                onClick={() => setActiveTab(id as any)}
+                onClick={() => setActiveTab(id as PanelTab)}
                 className="flex-1 py-3 flex items-center justify-center gap-1.5 text-xs font-semibold border-b-2 transition-all"
                 style={activeTab === id
                   ? { borderColor: 'var(--cobalt)', color: 'var(--cobalt-bright)', background: 'var(--navy-light)' }
@@ -497,7 +541,7 @@ export default function LiveSessionRoom({
 
             {activeTab === 'notes' && (
               <div className="flex-1 flex flex-col">
-                <p className="text-xs font-semibold text-white mb-2">Private Session Notes</p>
+                <div className="mb-2 flex items-center justify-between gap-2"><p className="text-xs font-semibold text-white">Private Notes · saved on this device</p><button onClick={exportNotes} className="inline-flex items-center gap-1 rounded-lg p-1.5 text-[11px] text-blue-300"><Download size={13} />Export</button></div>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -507,6 +551,7 @@ export default function LiveSessionRoom({
                 />
               </div>
             )}
+            {activeTab === 'code' && <CollaborativeCodeEditor roomId={roomId} userId={currentUser.id} userName={currentUser.name} />}
           </div>
         </div>
       </div>

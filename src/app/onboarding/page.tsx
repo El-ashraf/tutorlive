@@ -57,13 +57,13 @@ export default function OnboardingPage() {
               value: 'STUDENT' as const,
               icon: GraduationCap,
               title: 'I\'m a student',
-              desc: 'Find expert tutors and book live sessions',
+              desc: 'Find a tutor and book an online session',
             },
             {
               value: 'TUTOR' as const,
               icon: BookOpen,
               title: 'I\'m a tutor',
-              desc: 'Teach students and earn from live sessions',
+              desc: 'Offer lessons and meet students online',
             },
           ].map(({ value, icon: Icon, title, desc }) => (
             <button

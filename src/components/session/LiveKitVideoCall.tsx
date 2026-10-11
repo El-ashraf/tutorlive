@@ -113,12 +113,17 @@ export default function LiveKitVideoCall({ roomId, userName, isTutor }: LiveKitV
   const [serverUrl, setServerUrl] = useState('')
   const [error, setError] = useState('')
   const [status, setStatus] = useState('Preparing classroom…')
+  const [mediaOnEntry, setMediaOnEntry] = useState({ microphone: false, camera: false })
 
   useEffect(() => {
     let mounted = true
 
     const connect = async () => {
       try {
+        try {
+          const preferences = JSON.parse(localStorage.getItem('tutorlive-preferences') || '{}')
+          setMediaOnEntry({ microphone: preferences.microphoneOnEntry === true, camera: preferences.cameraOnEntry === true })
+        } catch { setMediaOnEntry({ microphone: false, camera: false }) }
         const response = await fetch(`/api/livekit/token?roomId=${encodeURIComponent(roomId)}`, {
           cache: 'no-store',
         })
@@ -150,8 +155,8 @@ export default function LiveKitVideoCall({ roomId, userName, isTutor }: LiveKitV
           serverUrl={serverUrl}
           token={token}
           connect
-          audio={isTutor}
-          video={isTutor}
+          audio={mediaOnEntry.microphone}
+          video={mediaOnEntry.camera}
           options={{ adaptiveStream: true, dynacast: true }}
           onConnected={() => setStatus('Connected')}
           onDisconnected={() => setStatus('Reconnecting…')}

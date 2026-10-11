@@ -8,12 +8,14 @@ interface BookingModalProps {
   tutorId: string
   tutorName: string
   subjects: string[]
+  availability?: unknown
 }
 
 export default function BookingModal({
   tutorId,
   tutorName,
   subjects,
+  availability,
 }: BookingModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [subject, setSubject] = useState(subjects[0] || 'General Tutoring')
@@ -24,6 +26,11 @@ export default function BookingModal({
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const schedule = availability && typeof availability === 'object'
+    ? availability as { timezone?: string; days?: Record<string, { enabled?: boolean; start?: string; end?: string }> }
+    : undefined
+  const openDays = Object.entries(schedule?.days || {}).filter(([, day]) => day.enabled)
+  const minDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60_000).toISOString().slice(0, 10)
 
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -87,8 +94,9 @@ export default function BookingModal({
               Book Session with {tutorName}
             </h2>
             <p className="text-xs mb-6" style={{ color: 'var(--text-muted)' }}>
-              Select your subject and preferred date/time.
+              Select a time in your timezone. The tutor’s availability is checked before the request is sent.
             </p>
+            {openDays.length > 0 && <p className="mb-4 rounded-xl border border-blue-400/15 bg-blue-400/5 p-3 text-xs text-white/70">Tutor hours ({schedule?.timezone || 'timezone not set'}): {openDays.map(([day, hours]) => `${day}: ${hours.start}–${hours.end}`).join(' · ')}</p>}
 
             <form onSubmit={handleBook} className="space-y-4">
               <div>
@@ -135,6 +143,7 @@ export default function BookingModal({
                   </label>
                   <input
                     type="date"
+                    min={minDate}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="w-full px-3 py-2.5 rounded-xl text-sm text-white focus:outline-none"
@@ -155,6 +164,13 @@ export default function BookingModal({
                     required
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold mb-1 text-white">Duration</label>
+                <select value={duration} onChange={(e) => setDuration(e.target.value)} className="w-full rounded-xl px-3 py-2.5 text-sm text-white" style={{ background: 'var(--navy)', border: '1px solid rgba(37,99,235,0.15)' }}>
+                  {[30, 45, 60, 90, 120].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
+                </select>
               </div>
 
               <div>

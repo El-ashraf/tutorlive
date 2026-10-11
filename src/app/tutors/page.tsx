@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { Star, Search, ArrowRight } from '@/components/ui/icons'
+import TutorsSearchFilter from '@/components/tutors/TutorsSearchFilter'
 
 export const revalidate = 60
 
@@ -12,21 +13,28 @@ type TutorWithProfile = Prisma.UserGetPayload<{
 export default async function TutorsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ subject?: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { subject } = await searchParams
+  const params = await searchParams
+  const value = (key: string) => typeof params[key] === 'string' ? params[key] as string : ''
+  const subject = value('subject')
+  const q = value('q').trim()
+  const university = value('university').trim()
+  const courseCode = value('courseCode').trim()
+  const maxRate = Number(value('maxRate'))
+  const minRating = Number(value('minRating'))
+  const sort = value('sort') || 'newest'
+
+  const filters: Prisma.UserWhereInput[] = [{ role: 'TUTOR' }]
+  if (subject) filters.push({ subjects: { has: subject } })
+  if (q) filters.push({ OR: [{ name: { contains: q, mode: 'insensitive' } }, { bio: { contains: q, mode: 'insensitive' } }, { subjects: { has: q } }] })
+  if (Number.isFinite(maxRate) && value('maxRate')) filters.push({ OR: [{ hourlyRate: null }, { hourlyRate: { lte: maxRate } }] })
+  if (university) filters.push({ tutorProfile: { is: { university: { contains: university, mode: 'insensitive' } } } })
+  if (courseCode) filters.push({ tutorProfile: { is: { courseCodes: { has: courseCode } } } })
+  if (Number.isFinite(minRating) && minRating > 0) filters.push({ tutorProfile: { is: { avgRating: { gte: Math.min(minRating, 5) } } } })
 
   const tutors: TutorWithProfile[] = await prisma.user.findMany({
-    where: {
-      role: 'TUTOR',
-      ...(subject
-        ? {
-            subjects: {
-              has: subject,
-            },
-          }
-        : {}),
-    },
+    where: { AND: filters },
     include: {
       tutorProfile: true,
     },
@@ -34,6 +42,11 @@ export default async function TutorsPage({
       createdAt: 'desc',
     },
   })
+
+  if (sort === 'rating') tutors.sort((a, b) => (b.tutorProfile?.avgRating ?? 0) - (a.tutorProfile?.avgRating ?? 0))
+  if (sort === 'sessions') tutors.sort((a, b) => (b.tutorProfile?.totalSessions ?? 0) - (a.tutorProfile?.totalSessions ?? 0))
+  if (sort === 'price-low') tutors.sort((a, b) => (a.hourlyRate ?? 0) - (b.hourlyRate ?? 0))
+  if (sort === 'price-high') tutors.sort((a, b) => (b.hourlyRate ?? 0) - (a.hourlyRate ?? 0))
 
   const popularSubjects = [
     'Mathematics',
@@ -55,10 +68,10 @@ export default async function TutorsPage({
             ← Back to Home
           </Link>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
-            Find Expert Tutors
+            Browse tutors
           </h1>
           <p className="text-base max-w-xl mx-auto" style={{ color: 'var(--text-muted)' }}>
-            Book 1-on-1 live interactive sessions with verified tutors in science, math, coding, and more.
+            Search tutor profiles by subject, course, rating, or hourly rate.
           </p>
 
           <div className="flex flex-wrap justify-center gap-2 mt-8">
@@ -86,6 +99,7 @@ export default async function TutorsPage({
               </Link>
             ))}
           </div>
+          <TutorsSearchFilter values={{ q, subject, maxRate: value('maxRate'), minRating: value('minRating'), university, courseCode, sort }} />
         </div>
       </header>
 
@@ -97,7 +111,7 @@ export default async function TutorsPage({
               No tutors found
             </h3>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              {subject ? `No tutors currently available for "${subject}".` : 'No tutors registered yet.'}
+              {subject || q || university || courseCode ? 'No tutors match these filters. Try widening your search.' : 'No tutors registered yet.'}
             </p>
           </div>
         ) : (
@@ -127,8 +141,9 @@ export default async function TutorsPage({
                           {tutor.name}
                         </h3>
                         <p className="text-xs line-clamp-1" style={{ color: 'var(--cobalt-bright)' }}>
-                          {profile?.headline || 'Expert Tutor'}
+                          {profile?.headline || 'Tutor'}
                         </p>
+                        {profile?.university && <p className="mt-1 text-[11px] text-white/55">{profile.university}{profile.courseCodes.length ? ` · ${profile.courseCodes.slice(0, 3).join(', ')}` : ''}</p>}
                         <div className="flex items-center gap-2 mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
                           <span className="flex items-center gap-1 font-semibold" style={{ color: '#fbbf24' }}>
                             <Star size={14} className="fill-amber-400 text-amber-400" />
@@ -141,7 +156,7 @@ export default async function TutorsPage({
                     </div>
 
                     <p className="text-sm line-clamp-3 mb-4 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                      {tutor.bio || 'Experienced tutor dedicated to helping students succeed in their learning goals.'}
+                      {tutor.bio || 'This tutor has not added a bio yet.'}
                     </p>
 
                     <div className="flex flex-wrap gap-1.5 mb-6">

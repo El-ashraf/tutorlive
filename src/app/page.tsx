@@ -77,20 +77,20 @@ export default async function HomePage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: 'var(--cobalt-bright)' }} />
                   <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: 'var(--cobalt-bright)' }} />
                 </span>
-                Live sessions available now
+                Online tutoring
               </div>
 
               <h1 className="text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.08] mb-4 sm:mb-6 text-white tracking-tight">
-                Learn live, learn{' '}
-                <span style={{ color: 'var(--cobalt-bright)' }}>better.</span>
+                Learn one-to-one{' '}
+                <span style={{ color: 'var(--cobalt-bright)' }}>with a tutor.</span>
               </h1>
 
               <p
                 className="text-sm sm:text-lg md:text-xl max-w-xl mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed"
                 style={{ color: 'rgba(255,255,255,0.6)' }}
               >
-                Book a real-time tutoring session with expert tutors. Live video,
-                shared whiteboard, screen sharing — everything you need in one room.
+                Meet your tutor by video, work on a shared whiteboard, and share
+                your screen during lessons.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
@@ -99,7 +99,7 @@ export default async function HomePage() {
                   className="gloss-btn inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-semibold text-sm sm:text-base text-white transition-transform hover:scale-105 card-glow"
                   style={{ background: 'linear-gradient(135deg, var(--cobalt) 0%, #1B63FF 100%)' }}
                 >
-                  Get started <ArrowRight size={18} />
+                  Create an account <ArrowRight size={18} />
                 </Link>
                 <Link
                   href="/tutors"
@@ -119,9 +119,9 @@ export default async function HomePage() {
               <div className="glass-card rounded-3xl p-5 sm:p-8">
                 <div className="space-y-5 sm:space-y-6">
                   {[
-                    { value: '100%', label: 'Free to start', icon: Star },
-                    { value: 'Live', label: 'Video + Whiteboard', icon: Video },
-                    { value: '1-on-1', label: 'Private sessions', icon: Users },
+                    { value: 'Free', label: 'To create an account', icon: Star },
+                    { value: 'Video', label: 'Whiteboard included', icon: Video },
+                    { value: 'One-to-one', label: 'Tutor sessions', icon: Users },
                   ].map(({ value, label, icon: Icon }) => (
                     <div key={label} className="flex items-center gap-3 sm:gap-4">
                       <div
@@ -148,10 +148,10 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-4 text-[var(--navy)] tracking-tight">
-              Everything in one live room
+              Tools for live lessons
             </h2>
             <p className="text-sm sm:text-lg" style={{ color: 'var(--text-muted)' }}>
-              No switching apps. Everything your session needs, built in.
+              Video, a shared whiteboard, screen sharing, and session booking.
             </p>
           </div>
 
@@ -159,23 +159,23 @@ export default async function HomePage() {
             {[
               {
                 icon: Video,
-                title: 'HD Video & Audio',
-                desc: 'Crystal-clear live video powered by open-source Jitsi — no download needed.',
+                title: 'Video and audio',
+                desc: 'Join your tutor in the browser. No app download is needed.',
               },
               {
                 icon: PenTool,
                 title: 'Live Whiteboard',
-                desc: 'Draw, annotate, and solve together in real-time. Strokes sync instantly.',
+                desc: 'Write and draw on the same board during your lesson.',
               },
               {
                 icon: Monitor,
                 title: 'Screen Sharing',
-                desc: "Share your screen, code, or slides with your student or tutor instantly.",
+                desc: 'Show slides, code, or anything open on your screen.',
               },
               {
                 icon: BookOpen,
                 title: 'Session Booking',
-                desc: 'Browse tutors, pick a time, and get email confirmation automatically.',
+                desc: 'Choose a tutor, request a time, and get booking updates by email.',
               },
             ].map(({ icon: Icon, title, desc }) => (
               <div
@@ -214,7 +214,7 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl font-bold mb-4 text-white tracking-tight">
-              Get started in minutes
+              How to book a lesson
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
@@ -222,20 +222,20 @@ export default async function HomePage() {
               {
                 step: '1',
                 icon: Users,
-                title: 'Create your account',
-                desc: 'Sign up as a student or tutor. Set up your profile in under 2 minutes.',
+                title: 'Create an account',
+                desc: 'Choose a student or tutor account and fill in your profile.',
               },
               {
                 step: '2',
                 icon: Clock,
-                title: 'Book a session',
-                desc: 'Browse tutors by subject, check availability, and book a slot.',
+                title: 'Choose a tutor',
+                desc: 'Search by subject or course, then request a session time.',
               },
               {
                 step: '3',
                 icon: Video,
-                title: 'Join the live room',
-                desc: 'Click your session link — video, whiteboard and screen sharing are ready.',
+                title: 'Join your lesson',
+                desc: 'Open the session link to join the video room and shared board.',
               },
             ].map(({ step, icon: Icon, title, desc }) => (
               <div
@@ -273,17 +273,17 @@ export default async function HomePage() {
           <div className="relative">
             <Star size={32} style={{ color: 'var(--cobalt-bright)' }} className="mx-auto mb-4" />
             <h2 className="text-2xl sm:text-4xl font-bold mb-4 text-white tracking-tight">
-              Start learning live today
+              Create a free account
             </h2>
             <p className="mb-6 sm:mb-8 text-sm sm:text-base" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              Free to join. No subscription. Pay only for sessions you book.
+              Browse tutors and book a session when you are ready.
             </p>
             <Link
               href="/sign-up"
               className="gloss-btn inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl font-semibold text-white transition-transform hover:scale-105 card-glow"
               style={{ background: 'linear-gradient(135deg, var(--cobalt) 0%, #1B63FF 100%)' }}
             >
-              Create free account <ArrowRight size={18} />
+              Create an account <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -295,7 +295,7 @@ export default async function HomePage() {
         style={{ borderColor: 'var(--border-cool)', color: 'var(--text-muted)' }}
       >
         <p className="text-sm">
-          © 2025 TutorLive · Built with Next.js, Supabase & Jitsi
+          © {new Date().getFullYear()} TutorLive
         </p>
       </footer>
     </div>

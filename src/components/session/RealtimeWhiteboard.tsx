@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import {
+  ArrowRight,
   Pencil,
   Eraser,
   RotateCcw,
@@ -25,7 +26,7 @@ interface Point {
 
 interface Stroke {
   id: string
-  tool: 'pen' | 'highlighter' | 'eraser' | 'line' | 'rect' | 'circle'
+  tool: 'pen' | 'highlighter' | 'eraser' | 'line' | 'arrow' | 'rect' | 'circle'
   color: string
   size: number
   points: Point[]
@@ -53,9 +54,9 @@ export default function RealtimeWhiteboard({
 }: RealtimeWhiteboardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState(false)
-  const [tool, setTool] = useState<'pen' | 'highlighter' | 'eraser' | 'line' | 'rect' | 'circle'>('pen')
+  const [tool, setTool] = useState<'pen' | 'highlighter' | 'eraser' | 'line' | 'arrow' | 'rect' | 'circle'>('pen')
   const [color, setColor] = useState('#2563EB')
-  const [size, setSize] = useState(4)
+  const [size, setSize] = useState(6)
 
   const [pages, setPages] = useState<Record<number, Stroke[]>>({ 0: [] })
   const [currentPage, setCurrentPage] = useState(0)
@@ -85,7 +86,7 @@ export default function RealtimeWhiteboard({
     '#10b981',
     '#f59e0b',
     '#8b5cf6',
-    '#ffffff',
+    '#111827',
   ]
 
   const redraw = useCallback(() => {
@@ -94,27 +95,34 @@ export default function RealtimeWhiteboard({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const bounds = canvas.getBoundingClientRect()
+    const width = bounds.width
+    const height = bounds.height
+    if (!width || !height) return
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 3)
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+
     ctx.fillStyle = '#fbf8f1'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, width, height)
 
     ctx.strokeStyle = '#e5ded3'
     ctx.lineWidth = 0.5
     const gridSize = 30
-    for (let x = 0; x < canvas.width; x += gridSize) {
+    for (let x = 0; x < width; x += gridSize) {
       ctx.beginPath()
       ctx.moveTo(x, 0)
-      ctx.lineTo(x, canvas.height)
+      ctx.lineTo(x, height)
       ctx.stroke()
     }
-    for (let y = 0; y < canvas.height; y += gridSize) {
+    for (let y = 0; y < height; y += gridSize) {
       ctx.beginPath()
       ctx.moveTo(0, y)
-      ctx.lineTo(canvas.width, y)
+      ctx.lineTo(width, y)
       ctx.stroke()
     }
 
     strokes.forEach((stroke) => {
-      drawStrokeOnContext(ctx, stroke, canvas.width, canvas.height)
+      drawStrokeOnContext(ctx, stroke, width, height)
     })
   }, [strokes])
 
@@ -152,10 +160,19 @@ export default function RealtimeWhiteboard({
     ctx.beginPath()
     const first = points[0]
 
-    if (stroke.tool === 'line' && points.length >= 2) {
+    if ((stroke.tool === 'line' || stroke.tool === 'arrow') && points.length >= 2) {
       const last = points[points.length - 1]
       ctx.moveTo(first.x, first.y)
       ctx.lineTo(last.x, last.y)
+      if (stroke.tool === 'arrow') {
+        const angle = Math.atan2(last.y - first.y, last.x - first.x)
+        const headLength = Math.max(8, Math.min(18, strokeSize * 6))
+        const headAngle = Math.PI / 6
+        ctx.moveTo(last.x, last.y)
+        ctx.lineTo(last.x - headLength * Math.cos(angle - headAngle), last.y - headLength * Math.sin(angle - headAngle))
+        ctx.moveTo(last.x, last.y)
+        ctx.lineTo(last.x - headLength * Math.cos(angle + headAngle), last.y - headLength * Math.sin(angle + headAngle))
+      }
     } else if (stroke.tool === 'rect' && points.length >= 2) {
       const last = points[points.length - 1]
       const width = last.x - first.x
@@ -182,18 +199,35 @@ export default function RealtimeWhiteboard({
     ctx.restore()
   }
 
+  const redrawRef = useRef(redraw)
+  redrawRef.current = redraw
+
   useEffect(() => {
-    const handleResize = () => {
-      const canvas = canvasRef.current
-      if (!canvas || !canvas.parentElement) return
-      canvas.width = canvas.parentElement.clientWidth
-      canvas.height = canvas.parentElement.clientHeight
-      redraw()
+    const canvas = canvasRef.current
+    const parent = canvas?.parentElement
+    if (!canvas || !parent) return
+
+    const resizeCanvas = () => {
+      const bounds = parent.getBoundingClientRect()
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 3)
+      const width = Math.max(1, Math.round(bounds.width * pixelRatio))
+      const height = Math.max(1, Math.round(bounds.height * pixelRatio))
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width
+        canvas.height = height
+      }
+      redrawRef.current()
     }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [redraw])
+
+    resizeCanvas()
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resizeCanvas)
+    observer?.observe(parent)
+    window.addEventListener('resize', resizeCanvas)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', resizeCanvas)
+    }
+  }, [])
 
   useEffect(() => {
     const channel = supabase.channel(`whiteboard:${roomId}`, {
@@ -470,13 +504,14 @@ export default function RealtimeWhiteboard({
 
   return (
     <div className="relative w-full h-full flex flex-col rounded-2xl overflow-hidden" style={{ background: '#fbf8f1', border: '1px solid rgba(37,99,235,0.15)' }}>
-      <div className="z-10 flex flex-col items-stretch gap-1.5 px-2 py-1.5 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:px-4 sm:py-3" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
+      <div className="z-10 flex flex-col items-stretch gap-1 px-2 py-1 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:px-4 sm:py-3" style={{ background: 'var(--navy-light)', borderBottom: '1px solid rgba(37,99,235,0.15)' }}>
         <div className="flex w-full items-center gap-1 overflow-x-auto rounded-xl p-1 sm:w-auto" style={{ background: 'var(--navy)' }}>
           {[
             { id: 'pen', icon: Pencil, label: 'Pen' },
             { id: 'highlighter', icon: Highlighter, label: 'Highlighter' },
             { id: 'eraser', icon: Eraser, label: 'Eraser' },
             { id: 'line', icon: Minus, label: 'Line' },
+            { id: 'arrow', icon: ArrowRight, label: 'Arrow' },
             { id: 'rect', icon: Square, label: 'Rectangle' },
             { id: 'circle', icon: CircleIcon, label: 'Circle' },
           ].map(({ id, icon: Icon, label }) => (
@@ -484,6 +519,8 @@ export default function RealtimeWhiteboard({
               key={id}
               onClick={() => setTool(id as any)}
               title={label}
+              aria-label={label}
+              aria-pressed={tool === id}
               className={`min-h-8 min-w-8 flex items-center justify-center rounded-lg text-xs font-medium transition-all sm:min-h-10 sm:min-w-10 ${
                 tool === id
                   ? 'shadow-sm'
@@ -502,6 +539,8 @@ export default function RealtimeWhiteboard({
             <button
               key={c}
               onClick={() => setColor(c)}
+              aria-label={`Set pen color ${c}`}
+              aria-pressed={color === c}
               className={`h-6 w-6 shrink-0 rounded-full border transition-transform sm:h-6 sm:w-6 ${
                 color === c ? 'scale-125 ring-2' : 'hover:scale-110'
               }`}
@@ -513,6 +552,7 @@ export default function RealtimeWhiteboard({
           <span className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>Size</span>
           <input
             type="range"
+            aria-label="Pen size"
             min="2"
             max="24"
             value={size}
@@ -523,80 +563,95 @@ export default function RealtimeWhiteboard({
           </div>
         </div>
 
-        <div className="flex w-full items-center justify-between gap-1 border-l-0 pl-0 sm:w-auto sm:justify-center sm:border-l sm:pl-2" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
-          <button
-            type="button"
-            onClick={() => handleSetPage(currentPage - 1)}
-            disabled={!isTutor || currentPage === 0}
-            aria-label="Previous whiteboard page"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-9 sm:min-w-9"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <span className="whitespace-nowrap text-[10px] font-semibold" style={{ color: 'var(--text-muted)' }}>
-            Page {currentPage + 1} of {pageCount}
-          </span>
-          <button
-            type="button"
-            onClick={() => handleSetPage(currentPage + 1)}
-            disabled={!isTutor || currentPage >= pageCount - 1}
-            aria-label="Next whiteboard page"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-9 sm:min-w-9"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            <ChevronRight size={16} />
-          </button>
-          {isTutor ? (
+        <div className="flex w-full items-center justify-between gap-1 sm:w-auto sm:flex-1">
+          <div className="flex min-w-0 items-center gap-0.5 sm:gap-1">
             <button
               type="button"
-              onClick={handleAddPage}
-              disabled={pageCount >= 100}
-              className="flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-semibold text-white disabled:opacity-40 sm:min-h-9"
-              style={{ background: 'var(--cobalt)' }}
+              onClick={() => handleSetPage(currentPage - 1)}
+              disabled={!isTutor || currentPage === 0}
+              aria-label="Previous whiteboard page"
+              className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-white/10 disabled:opacity-30 sm:min-h-9 sm:min-w-9"
+              style={{ color: 'var(--text-muted)' }}
             >
-              <Plus size={14} /> New page
+              <ChevronLeft size={16} />
             </button>
-          ) : (
-            <span className="whitespace-nowrap text-[9px]" style={{ color: 'var(--text-muted)' }}>Following teacher</span>
-          )}
-        </div>
+            <span className="whitespace-nowrap text-[10px] font-semibold" style={{ color: 'var(--text-muted)' }} aria-label={`Page ${currentPage + 1} of ${pageCount}`}>
+              <span className="sm:hidden">{currentPage + 1}/{pageCount}</span>
+              <span className="hidden sm:inline">Page {currentPage + 1} of {pageCount}</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => handleSetPage(currentPage + 1)}
+              disabled={!isTutor || currentPage >= pageCount - 1}
+              aria-label="Next whiteboard page"
+              className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-white/10 disabled:opacity-30 sm:min-h-9 sm:min-w-9"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              <ChevronRight size={16} />
+            </button>
+            {isTutor ? (
+              <button
+                type="button"
+                onClick={handleAddPage}
+                disabled={pageCount >= 100}
+                aria-label="Add whiteboard page"
+                title="New page"
+                className="flex min-h-8 min-w-8 items-center justify-center gap-1 rounded-lg px-1 text-[10px] font-semibold text-white disabled:opacity-40 sm:min-h-9 sm:px-2"
+                style={{ background: 'var(--cobalt)' }}
+              >
+                <Plus size={14} /><span className="hidden sm:inline">New page</span>
+              </button>
+            ) : (
+              <span className="whitespace-nowrap px-1 text-[9px] text-white/60 sm:px-2 sm:text-xs" aria-label="Following teacher">
+                <span className="sm:hidden">Live</span><span className="hidden sm:inline">Following teacher</span>
+              </span>
+            )}
+          </div>
 
-        <div className="flex w-full items-center justify-around gap-1.5 border-l-0 pl-0 sm:w-auto sm:justify-start sm:border-l sm:pl-3" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
+          <div className="flex shrink-0 items-center gap-0.5 border-l pl-1 sm:gap-1 sm:pl-3" style={{ borderColor: 'rgba(37,99,235,0.15)' }}>
           <button
+            type="button"
             onClick={handleUndo}
             disabled={strokes.length === 0}
             title="Undo"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-10 sm:min-w-10"
+            aria-label="Undo"
+            className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-white/10 disabled:opacity-30 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <RotateCcw size={16} />
           </button>
           <button
+            type="button"
             onClick={handleRedo}
             disabled={redoStack.length === 0}
             title="Redo"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg disabled:opacity-30 hover:bg-white/10 sm:min-h-10 sm:min-w-10"
+            aria-label="Redo"
+            className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-white/10 disabled:opacity-30 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <RotateCw size={16} />
           </button>
           <button
+            type="button"
             onClick={handleClear}
             title="Clear Board"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 sm:min-h-10 sm:min-w-10"
+            aria-label="Clear board"
+            className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-red-500/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--rose-bright)' }}
           >
             <Trash2 size={16} />
           </button>
           <button
+            type="button"
             onClick={handleDownload}
             title="Save Image"
-            className="min-h-8 min-w-8 flex items-center justify-center rounded-lg hover:bg-white/10 sm:min-h-10 sm:min-w-10"
+            aria-label="Save board page as image"
+            className="flex min-h-8 min-w-8 items-center justify-center rounded-lg hover:bg-white/10 sm:min-h-10 sm:min-w-10"
             style={{ color: 'var(--text-muted)' }}
           >
             <Download size={16} />
           </button>
+          </div>
         </div>
       </div>
 

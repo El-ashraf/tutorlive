@@ -32,13 +32,37 @@ export async function GET(request: Request) {
 
     const booking = await prisma.booking.findUnique({
       where: { roomId },
-      select: { studentId: true, tutorId: true },
+      select: { studentId: true, tutorId: true, status: true },
     })
-    if (booking && booking.studentId !== user.id && booking.tutorId !== user.id) {
+    if (booking && (booking.studentId !== user.id && booking.tutorId !== user.id || booking.status !== 'ACCEPTED')) {
       return NextResponse.json({ error: 'You are not a participant in this classroom.' }, { status: 403 })
     }
 
-    const roomRole = booking?.tutorId === user.id ? 'TUTOR' : booking?.studentId === user.id ? 'STUDENT' : user.role
+    const groupSession = await prisma.groupSession.findUnique({
+      where: { roomId },
+      select: {
+        status: true,
+        endedAt: true,
+        group: {
+          select: {
+            tutorId: true,
+            organization: {
+              select: { founderId: true, members: { where: { userId: user.id }, select: { userId: true, role: true } } },
+            },
+          },
+        },
+      },
+    })
+    const groupTutor = Boolean(groupSession && (
+      groupSession.group.tutorId === user.id ||
+      groupSession.group.organization.founderId === user.id ||
+      groupSession.group.organization.members.some((member) => member.role === 'TUTOR')
+    ))
+    if (groupSession && (groupSession.status !== 'ACTIVE' || groupSession.endedAt || (!groupTutor && groupSession.group.organization.members.length === 0))) {
+      return NextResponse.json({ error: 'You are not authorized to join this group class.' }, { status: 403 })
+    }
+
+    const roomRole = booking?.tutorId === user.id || groupTutor ? 'TUTOR' : booking?.studentId === user.id || groupSession ? 'STUDENT' : user.role
 
     const token = new AccessToken(apiKey, apiSecret, {
       // LiveKit requires identities to be unique within a room. Give each

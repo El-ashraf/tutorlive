@@ -12,6 +12,9 @@ import {
   Settings,
   BookOpen,
   Building2,
+  Brain,
+  HeartPulse,
+  Video,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { User as PrismaUser } from '@prisma/client'
@@ -21,6 +24,8 @@ const studentLinks = [
   { href: '/dashboard/sessions', icon: Calendar, label: 'My Sessions', mobileLabel: 'Sessions' },
   { href: '/tutors', icon: Users, label: 'Find Tutors', mobileLabel: 'Tutors' },
   { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center', mobileLabel: 'Center' },
+  { href: '/dashboard/study', icon: Brain, label: 'Study tools', mobileLabel: 'Study' },
+  { href: '/dashboard/catchup', icon: HeartPulse, label: 'Catch-up plan', mobileLabel: 'Catch-up' },
   { href: '/dashboard/profile', icon: User, label: 'Profile', mobileLabel: 'Profile' },
   { href: '/dashboard/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },
 ]
@@ -29,6 +34,7 @@ const tutorLinks = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', mobileLabel: 'Home' },
   { href: '/dashboard/sessions', icon: Calendar, label: 'Sessions', mobileLabel: 'Sessions' },
   { href: '/dashboard/bookings', icon: BookOpen, label: 'Requests', mobileLabel: 'Requests' },
+  { href: '/dashboard/recording-studio', icon: Video, label: 'Recording Studio', mobileLabel: 'Studio' },
   { href: '/dashboard/organization', icon: Building2, label: 'Tutorial Center', mobileLabel: 'Center' },
   { href: '/dashboard/profile', icon: User, label: 'My Profile', mobileLabel: 'Profile' },
   { href: '/dashboard/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },

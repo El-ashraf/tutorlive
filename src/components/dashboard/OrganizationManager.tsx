@@ -36,6 +36,7 @@ export default function OrganizationManager({
   const [assignedTutorId, setAssignedTutorId] = useState('')
 
   const [loading, setLoading] = useState(false)
+  const [launchingGroupId, setLaunchingGroupId] = useState<string | null>(null)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
   const activeOrg = orgs.find((o) => o.id === activeOrgId)
@@ -95,7 +96,7 @@ export default function OrganizationManager({
       )
 
       setTutorEmail('')
-      alert(`Successfully added ${data.member.user.name} to tutorial center!`)
+      alert(`${data.member.user.name} was added to the tutorial center.`)
     } catch (err: any) {
       alert(err.message || 'Error adding member')
     } finally {
@@ -134,7 +135,7 @@ export default function OrganizationManager({
       setGroupName('')
       setGroupDesc('')
       setAssignedTutorId('')
-      alert('Tutorial group created successfully!')
+      alert('Tutorial group created.')
     } catch (err: any) {
       alert(err.message || 'Error creating tutorial group')
     } finally {
@@ -146,6 +147,19 @@ export default function OrganizationManager({
     navigator.clipboard.writeText(code)
     setCopiedCode(code)
     setTimeout(() => setCopiedCode(null), 2000)
+  }
+
+  const launchGroup = async (groupId: string) => {
+    setLaunchingGroupId(groupId)
+    try {
+      const response = await fetch(`/api/organizations/groups/${groupId}/sessions`, { method: 'POST' })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Could not start group class.')
+      router.push(result.url)
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Could not start group class.')
+      setLaunchingGroupId(null)
+    }
   }
 
   return (
@@ -334,6 +348,7 @@ export default function OrganizationManager({
                           <div className="text-[11px] font-semibold" style={{ color: 'var(--cobalt-bright)' }}>
                             Tutor: {g.tutor ? g.tutor.name : 'Unassigned'}
                           </div>
+                          {(g.tutorId === user.id || activeOrg.founderId === user.id || activeOrg.members?.some((member: any) => member.userId === user.id && member.role === 'TUTOR')) && <button onClick={() => void launchGroup(g.id)} disabled={launchingGroupId === g.id} className="mt-2 min-h-10 w-full rounded-xl bg-blue-600 px-3 text-xs font-bold text-white disabled:opacity-60">{launchingGroupId === g.id ? 'Starting class…' : 'Enter group classroom'}</button>}
                         </div>
                       ))}
                     </div>

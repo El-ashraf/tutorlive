@@ -26,6 +26,9 @@ export default async function TutorProfilePage({
   if (!tutor) notFound()
 
   const profile = tutor.tutorProfile
+  const availability = profile?.availability && typeof profile.availability === 'object' && !Array.isArray(profile.availability)
+    ? profile.availability as { timezone?: string; days?: Record<string, { enabled?: boolean; start?: string; end?: string }> }
+    : undefined
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--navy)' }}>
@@ -56,7 +59,7 @@ export default async function TutorProfilePage({
             >
               {tutor.name
                 .split(' ')
-                .map((n) => n[0])
+                .map((n: string) => n[0])
                 .join('')
                 .toUpperCase()
                 .slice(0, 2)}
@@ -73,6 +76,7 @@ export default async function TutorProfilePage({
               <p className="text-base font-semibold mt-1" style={{ color: 'var(--cobalt-bright)' }}>
                 {profile?.headline || 'Professional 1-on-1 Tutor'}
               </p>
+              {profile?.university && <p className="mt-2 text-sm text-white/70">{profile.university}{profile.courseCodes.length ? ` · ${profile.courseCodes.join(', ')}` : ''}</p>}
               <div className="flex flex-wrap items-center gap-4 mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
                 <span className="flex items-center gap-1 font-bold" style={{ color: '#fbbf24' }}>
                   <Star size={16} className="fill-amber-400 text-amber-400" />
@@ -97,7 +101,7 @@ export default async function TutorProfilePage({
                 <span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>/hr</span>
               </div>
             </div>
-            <BookingModal tutorId={tutor.id} tutorName={tutor.name} subjects={tutor.subjects} />
+            <BookingModal tutorId={tutor.id} tutorName={tutor.name} subjects={tutor.subjects} availability={profile?.availability} />
           </div>
         </div>
 
@@ -122,7 +126,7 @@ export default async function TutorProfilePage({
                 </p>
               ) : (
                 <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                  {tutor.reviewsReceived.map((review) => (
+                  {tutor.reviewsReceived.map((review: any) => (
                     <div key={review.id} className="py-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="font-semibold text-sm" style={{ color: 'var(--ice)' }}>
@@ -151,12 +155,17 @@ export default async function TutorProfilePage({
           </div>
 
           <div className="space-y-6">
+            {availability && <div className="glass-card rounded-2xl p-4 sm:p-6">
+              <h3 className="mb-3 text-base font-bold text-white">Teaching availability</h3>
+              <p className="mb-2 text-xs text-white/50">Times shown in {availability.timezone || 'the tutor’s timezone'}.</p>
+              <div className="space-y-1">{Object.entries(availability.days || {}).filter(([, day]) => day.enabled).map(([day, hours]) => <div key={day} className="flex justify-between gap-3 text-sm text-white/75"><span className="capitalize">{day}</span><span>{hours.start}–{hours.end}</span></div>)}</div>
+            </div>}
             <div className="glass-card rounded-2xl p-4 sm:p-6">
               <h3 className="font-bold text-base mb-3" style={{ color: 'var(--ice)' }}>
                 Subjects Taught
               </h3>
               <div className="flex flex-wrap gap-2">
-                {tutor.subjects.map((sub) => (
+                {tutor.subjects.map((sub: string) => (
                   <span
                     key={sub}
                     className="text-xs px-3 py-1.5 rounded-lg font-medium"

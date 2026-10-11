@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { formatDateTime } from '@/lib/utils'
 import Link from 'next/link'
 import { Calendar, Video, Clock, ArrowRight } from '@/components/ui/icons'
+import ReviewModal from '@/components/dashboard/ReviewModal'
+import SessionSummaryDrawer from '@/components/dashboard/SessionSummaryDrawer'
 
 export default async function SessionsPage() {
   const { userId } = await auth()
@@ -13,11 +15,11 @@ export default async function SessionsPage() {
     where: { clerkId: userId },
     include: {
       bookingsAsStudent: {
-        include: { tutor: true },
+        include: { tutor: true, review: true },
         orderBy: { scheduledAt: 'desc' },
       },
       bookingsAsTutor: {
-        include: { student: true },
+        include: { student: true, review: true },
         orderBy: { scheduledAt: 'desc' },
       },
     },
@@ -65,7 +67,7 @@ export default async function SessionsPage() {
           </div>
         ) : (
           <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-            {bookings.map((b) => {
+            {bookings.map((b: any) => {
               const other = isTutor ? (b as any).student : (b as any).tutor
               return (
                 <div key={b.id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -91,18 +93,18 @@ export default async function SessionsPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-3 pl-11 sm:pl-0">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pl-11 sm:justify-end sm:pl-0">
                     <span
                       className="text-xs font-semibold px-3 py-1 rounded-full"
                       style={{
                         background:
-                          b.status === 'ACCEPTED'
+                          b.status === 'ACCEPTED' || b.status === 'COMPLETED'
                             ? 'rgba(16,185,129,0.15)'
                             : b.status === 'PENDING'
                             ? 'rgba(37,99,235,0.15)'
                             : 'rgba(244,63,94,0.15)',
                         color:
-                          b.status === 'ACCEPTED'
+                          b.status === 'ACCEPTED' || b.status === 'COMPLETED'
                             ? '#34d399'
                             : b.status === 'PENDING'
                             ? 'var(--cobalt-bright)'
@@ -121,6 +123,8 @@ export default async function SessionsPage() {
                         <Video size={14} /> Join Room
                       </Link>
                     )}
+                    {b.status === 'COMPLETED' && <SessionSummaryDrawer bookingId={b.id} />}
+                    {b.status === 'COMPLETED' && !isTutor && <ReviewModal bookingId={b.id} tutorName={other.name} reviewed={Boolean(b.review)} />}
                   </div>
                 </div>
               )

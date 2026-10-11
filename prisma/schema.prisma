@@ -42,6 +42,9 @@ model User {
   organizationsFounded Organization[] @relation("OrganizationFounder")
   organizationMemberships OrganizationMember[]
   tutorialGroups TutorialGroup[] @relation("TutorialGroupTutor")
+  studyDecks StudyDeck[]
+  catchUpPlans CatchUpPlan[]
+  groupSessionsCreated GroupSession[] @relation("GroupSessionCreator")
 
   @@index([clerkId])
   @@index([role])
@@ -56,6 +59,8 @@ model TutorProfile {
   totalSessions Int      @default(0)
   avgRating     Float    @default(0)
   reviewCount   Int      @default(0)
+  university    String?
+  courseCodes   String[] @default([])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -134,9 +139,58 @@ model TutorialGroup {
   tutorId        String?
   organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   tutor          User?         @relation("TutorialGroupTutor", fields: [tutorId], references: [id], onDelete: SetNull)
+  sessions       GroupSession[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
   @@index([organizationId])
   @@index([tutorId])
+}
+
+model GroupSession {
+  id            String        @id @default(cuid())
+  roomId        String        @unique @default(cuid())
+  groupId       String
+  group         TutorialGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdById   String
+  createdBy     User          @relation("GroupSessionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  status        String        @default("ACTIVE")
+  createdAt     DateTime      @default(now())
+  endedAt       DateTime?
+
+  @@index([groupId, createdAt])
+}
+
+model StudyDeck {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  subject        String
+  summary        String
+  cheatSheet     String
+  content        Json
+  sourceFileName String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+model CatchUpPlan {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  subject     String
+  courseCode  String?
+  missedDates Json?
+  sourceNotes String?
+  plan        Json
+  progress    Int      @default(0)
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, status])
 }

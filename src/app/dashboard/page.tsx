@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { formatDateTime } from '@/lib/utils'
 import { Calendar, BookOpen, Clock, Users, ArrowRight } from '@/components/ui/icons'
+import { Sparkles, Heart, Video } from 'lucide-react'
 import Link from 'next/link'
 
 import InstantRoomLauncher from '@/components/dashboard/InstantRoomLauncher'
@@ -33,8 +34,8 @@ export default async function DashboardPage() {
   if (!user) redirect('/onboarding')
 
   const isTutor = user.role === 'TUTOR'
-  const upcomingSessions = isTutor ? user.bookingsAsTutor : user.bookingsAsStudent
-  const pendingCount = upcomingSessions.filter((b) => b.status === 'PENDING').length
+  const upcomingSessions: any[] = isTutor ? user.bookingsAsTutor : user.bookingsAsStudent
+  const pendingCount = upcomingSessions.filter((b: any) => b.status === 'PENDING').length
 
   return (
     <div className="space-y-8">
@@ -45,20 +46,38 @@ export default async function DashboardPage() {
         </h1>
         <p className="mt-1" style={{ color: 'var(--text-muted)' }}>
           {isTutor
-            ? 'Here\'s your teaching schedule and session overview.'
-            : 'Here\'s what\'s coming up for your learning journey.'}
+            ? 'Here are your upcoming lessons and student requests.'
+            : 'Here are your upcoming sessions and study tools.'}
         </p>
       </div>
 
       {/* Instant Live Class Launcher & Room Join (Video + Whiteboard) */}
-      <InstantRoomLauncher userName={user.name} />
+      <InstantRoomLauncher isTutor={isTutor} />
+
+      {isTutor && (
+        <Link
+          href="/dashboard/recording-studio"
+          className="group flex flex-col gap-4 rounded-2xl border border-violet-400/20 bg-gradient-to-r from-violet-500/10 to-blue-500/10 p-4 transition hover:border-violet-300/40 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+        >
+          <div className="flex items-start gap-3">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-violet-400/15 text-violet-300">
+              <Video size={21} />
+            </span>
+            <div>
+              <h2 className="font-semibold text-white">Create a recorded lesson</h2>
+              <p className="mt-1 text-sm text-slate-400">Record your slides or screen with your voice, camera, and annotations.</p>
+            </div>
+          </div>
+          <span className="rounded-xl bg-violet-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-violet-500">Open Recording Studio</span>
+        </Link>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             label: 'Upcoming sessions',
-            value: upcomingSessions.filter((b) => b.status === 'ACCEPTED').length,
+            value: upcomingSessions.filter((b: any) => b.status === 'ACCEPTED').length,
             icon: Calendar,
             color: 'var(--cobalt-bright)',
           },
@@ -80,7 +99,7 @@ export default async function DashboardPage() {
             label: isTutor ? 'Avg. rating' : 'Tutors booked',
             value: isTutor
               ? (user.tutorProfile?.avgRating.toFixed(1) ?? '—')
-              : new Set(user.bookingsAsStudent.map((b) => b.tutorId)).size,
+              : new Set(user.bookingsAsStudent.map((b: any) => b.tutorId)).size,
             icon: Users,
             color: 'var(--rose-bright)',
           },
@@ -106,6 +125,69 @@ export default async function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* Student learning tools */}
+      {!isTutor && (
+      <div className="glass-card rounded-2xl p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-semibold text-lg" style={{ color: 'var(--ice)' }}>
+              University & AI Learning Hub
+            </h2>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+              Make study materials from your notes or plan how to catch up on missed classes.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          {/* Study materials */}
+          <Link
+            href="/dashboard/study"
+            className="group p-4 rounded-xl transition-all hover:bg-white/5 flex flex-col justify-between"
+            style={{ border: '1px solid rgba(37,99,235,0.2)', background: 'rgba(15,23,42,0.4)' }}
+          >
+            <div>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: 'rgba(37,99,235,0.15)', color: 'var(--cobalt-bright)' }}>
+                <Sparkles size={18} />
+              </div>
+              <h3 className="font-semibold text-sm group-hover:text-blue-400 transition-colors" style={{ color: 'var(--ice)' }}>
+                Study materials
+              </h3>
+              <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Make flashcards, summaries, and quiz questions from your notes.
+              </p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-semibold" style={{ color: 'var(--cobalt-bright)' }}>
+              Open study tools <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Catch-Up Mode */}
+          <Link
+            href="/dashboard/catchup"
+            className="group p-4 rounded-xl transition-all hover:bg-white/5 flex flex-col justify-between"
+            style={{ border: '1px solid rgba(244,63,94,0.2)', background: 'rgba(15,23,42,0.4)' }}
+          >
+            <div>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ background: 'rgba(244,63,94,0.15)', color: 'var(--rose-bright)' }}>
+                <Heart size={18} />
+              </div>
+              <h3 className="font-semibold text-sm group-hover:text-rose-400 transition-colors" style={{ color: 'var(--ice)' }}>
+                Catch up on classes
+              </h3>
+              <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Create a weekly plan from missed topics or class notes.
+              </p>
+            </div>
+            <div className="mt-4 flex items-center gap-1 text-xs font-semibold" style={{ color: 'var(--rose-bright)' }}>
+              View catch-up plans <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+        </div>
+      </div>
+      )}
 
       {/* Upcoming sessions */}
       <div
@@ -220,7 +302,7 @@ export default async function DashboardPage() {
                   Browse tutors
                 </div>
                 <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  Find your perfect match
+                  Search by subject or course
                 </div>
               </div>
             </Link>
